@@ -249,6 +249,7 @@ document.getElementById('keyboard').addEventListener('mousedown', function(event
     choiceEvent(target.id);
     press(true, target, true);
 
+    searchCountry(document.querySelector('.textarea').value);
     document.onmouseup = function() {
       textarea.focus();
       press(false, target, true);
