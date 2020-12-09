@@ -47,6 +47,7 @@ section:hover .fullScreenBtn {
   align-items: center;
   justify-content: center;
   transition-duration: 0.5s;
+  z-index: 3;
 }
 
 .fullScreenBtn img {
@@ -69,7 +70,9 @@ section.fullScreen {
   margin: 0;
 }
 
-.sectionConttent {}
+.sectionConttent {
+  height: 100%;
+}
 
 .globalInfoAndTopNumber {
   width: 18%;
@@ -98,6 +101,7 @@ section.fullScreen {
   color: rgb(230, 0, 0);
   font-size: 48px;
   text-shadow: 0 0 2px black;
+  font-family: fantasy;
 }
 
 .globalInfo {
@@ -105,9 +109,56 @@ section.fullScreen {
   width: 100%;
 }
 
+.globalInfo__header {
+  height: 20%;
+  border-bottom: solid 1px #585858;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+}
+
 .globalInfo__top {}
 
-.globalInfo__table {}
+.globalTable {
+  height: 80%;
+  overflow-y: scroll;
+}
+
+.globalTable::-webkit-scrollbar {
+  display: none;
+}
+
+.globalTable__line {
+  height: 46px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-bottom: solid 1px #191919;
+  cursor: pointer;
+}
+
+.globalTable__line-hidden {
+  display: none;
+}
+
+.globalTable__line:hover,
+.globalTable__line_selected {
+  background: #6d6d6d3d;
+}
+
+.globalTable__line__number {
+  font-size: 26px;
+  text-shadow: 0 0 1px black;
+  color: #d40000;
+  font-family: fantasy;
+}
+
+.globalTable__line__name {
+  font-size: 23px;
+  text-shadow: 0 0 1px black;
+  color: #ababab;
+  text-transform: capitalize;
+}
 
 .map {
   width: 50%;

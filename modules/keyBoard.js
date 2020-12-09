@@ -279,10 +279,6 @@ document.addEventListener('keydown', function(event) {
         capsLockPress = true;
         choiceEvent(event.code);
       }
-    } else if (key.classList[0] == 'key' || key.classList[0] == 'tab') {
-      event.preventDefault();
-      press(true, key);
-      choiceEvent(event.code);
     } else {
       press(true, key);
     }
