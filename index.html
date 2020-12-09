@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Covid-19</title>
+  <link rel="icon" type="image/png" sizes="32x14" href="assets/images/favicon.png">
+  <link rel="stylesheet" href="style/styleKeyBoard.css">
+  <link rel="stylesheet" href="style/style.css">
+  <link rel="stylesheet" href="style/styleSearch.css">
+</head>
+
+<body>
+  <main>
+    <div class="globalInfoAndTopNumber">
+      <section class="topNumber">
+        <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
+        <div class="sectionConttent">
+          <div class="topNumber__discription">
+            Global Cases
+          </div>
+          <div class="topNumber__value">
+            50 812 345
+          </div>
+        </div>
+      </section>
+      <section class="globalInfo">
+        <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
+        <div class="sectionConttent">
+          <div class="globalInfo__table"> </div>
+        </div>
+      </section>
+    </div>
+    <section class="map">
+      <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
+      <div class="sectionConttent"></div>
+    </section>
+
+    <div class="grafAndMiniTables">
+      <section class="graf">
+        <div class="fullScreenBtn">
+          <img src="assets/images/fullScreen.png">
+        </div>
+        <div class="sectionConttent"></div>
+      </section>
+      <section class="miniTables">
+        <div class="fullScreenBtn">
+          <img src="assets/images/fullScreen.png">
+        </div>
+        <div class="sectionConttent">
+          <div class="miniTables__left"></div>
+          <div class="miniTables__right"></div>
+        </div>
+      </section>
+    </div>
+    <div class="searchContainer">
+
+      <div class="openKeyboardBtn"><img src="assets/images/openKeyboardBtn.png"></div>
+      <div class="searchInputContainer">
+        <input type="text" placeholder="search" class="textarea">
+        <div class="searchVariables"></div>
+      </div>
+      <div class="searchBtn">
+        <div class="searchBtn__inset">
+          <div class="searchBtn__inset_part"><img src="assets/images/searchClose.png"></div>
+          <div class="searchBtn__inset_part"><img src="assets/images/search.png"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class='audio'>
+    <audio id='enterAudio' src="assets/audio/enter.mp3"></audio>
+    <audio id='ruUpAudio' src="assets/audio/ruUP.mp3"></audio>
+    <audio id='ruDownAudio' src="assets/audio/ruDown.mp3"></audio>
+    <audio id='enUpAudio' src="assets/audio/enUP.mp3"></audio>
+    <audio id='enDownAudio' src="assets/audio/enDown.mp3"></audio>
+    <audio id='langAudio' src="assets/audio/changeLanguage.mp3"></audio>
+    <audio id='shiftAudio' src="assets/audio/shift.mp3"></audio>
+    <audio id='capsLookAudio' src="assets/audio/capsLook.mp3"></audio>
+    <audio id='backspaceAudio' src="assets/audio/backspace.mp3"></audio>
+    <audio id='openKeyboardAudio' src="assets/audio/openKeyboard.wav"></audio>
+    <audio id='closeKeyboardAudio' src="assets/audio/closeKeyboard.wav"></audio>
+  </div>
+
+  <script src="index.js" defer></script>
+  <script src="modules/keyBoard.js" defer></script>
+  <script src="modules/keys.js" defer></script>
+</body>
+
+</html>

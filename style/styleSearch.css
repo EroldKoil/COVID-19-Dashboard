@@ -1,0 +1,75 @@
+.searchContainer {
+  height: 40px;
+  width: 300px;
+  position: fixed;
+  left: 0px;
+  top: 30%;
+  background-color: chartreuse;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.searchInputContainer {
+  width: 60%;
+}
+
+.searchInputContainer input {}
+
+.searchVariables {}
+
+.openKeyboardBtn {
+  height: 82%;
+  border-right: solid 1px #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
+  width: 15%;
+}
+
+.searchBtn {
+  height: 100%;
+  width: 20%;
+  overflow: hidden;
+  border-left: solid 1px #000;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  position: relative;
+}
+
+.searchBtn__inset {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff0808 50%, #5262ff 50%);
+  cursor: pointer;
+  position: absolute;
+  left: 0%;
+}
+
+.searchBtn__inset_part {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchOpen {
+  width: 50%;
+}
+
+.openKeyboardBtn img {
+  width: 40px;
+  cursor: pointer;
+}
+
+.searchBtn__inset_part img {
+  width: 26px;
+}
+
+.searchBtn__inset img:first-child {
+  transform: rotate(180deg);
+}
