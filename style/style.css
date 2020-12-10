@@ -2,16 +2,13 @@ body {
   background-color: #2b2b2b;
   width: 100vw;
   margin: 0 auto;
-  overflow: hidden;
   height: 100vh;
   min-width: 500px;
-  padding: 10px;
+  padding: 10px 0;
 }
 
-@media (max-width: 850px) {}
-
 main {
-  width: 100%;
+  width: 96%;
   height: 97%;
   display: flex;
   max-width: 1600px;
@@ -66,7 +63,7 @@ section.fullScreen {
   height: 98%;
   left: 1%;
   top: 1%;
-  z-index: 2;
+  z-index: 5;
   margin: 0;
 }
 
@@ -75,7 +72,7 @@ section.fullScreen {
 }
 
 .globalInfoAndTopNumber {
-  width: 18%;
+  width: 19%;
 }
 
 .topNumber {
@@ -99,7 +96,7 @@ section.fullScreen {
 
 .topNumber__value {
   color: rgb(230, 0, 0);
-  font-size: 48px;
+  font-size: 41px;
   text-shadow: 0 0 2px black;
   font-family: fantasy;
 }
@@ -120,25 +117,46 @@ section.fullScreen {
 .globalInfo__top {}
 
 .globalTable {
-  height: 80%;
+  height: 79%;
   overflow-y: scroll;
 }
 
-.globalTable::-webkit-scrollbar {
+.globalTable::-webkit-scrollbar,
+main::-webkit-scrollbar,
+body::-webkit-scrollbar {
   display: none;
 }
 
 .globalTable__line {
   height: 46px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   border-bottom: solid 1px #191919;
   cursor: pointer;
+  padding: 0 14px;
 }
 
 .globalTable__line-hidden {
   display: none;
+}
+
+@keyframes line-hidden {
+  0% {
+    height: 46px;
+    border-bottom: solid 1px #191919;
+    display: flex;
+  }
+  99% {
+    height: 0px;
+    border-bottom: solid 1px #191919;
+    display: flex;
+  }
+  100% {
+    border-bottom: solid 0px #191919;
+    height: 0px;
+    display: none;
+  }
 }
 
 .globalTable__line:hover,
@@ -154,10 +172,11 @@ section.fullScreen {
 }
 
 .globalTable__line__name {
-  font-size: 23px;
+  font-size: 18px;
   text-shadow: 0 0 1px black;
   color: #ababab;
   text-transform: capitalize;
+  width: 50%;
 }
 
 .map {
@@ -173,19 +192,64 @@ section.fullScreen {
 
 .grafAndMiniTables {
   width: 30%;
+  height: 100%;
 }
 
 .miniTables {
-  height: 39%;
-  margin-top: 3%;
+  height: 59%;
 }
 
-.miniTables>div {}
+.miniTables .sectionConttent {
+  display: flex;
+}
 
-.miniTables__left {}
+.graf .sectionConttent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.miniTables .sectionConttent>div {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.miniTables__left {
+  border-right: solid 1px;
+}
 
 .miniTables__right {}
 
 .graf {
-  height: 59%;
+  height: 39%;
+}
+
+@media (max-width: 1400px) {
+  main {
+    flex-wrap: wrap;
+  }
+  .globalInfoAndTopNumber {
+    width: 29%;
+    height: 75%;
+  }
+  .map {
+    width: 70%;
+    height: 75%;
+  }
+  .grafAndMiniTables {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .graf {
+    width: 50%;
+    height: 55%;
+  }
+  .miniTables {
+    width: 50%;
+    height: 55%;
+  }
 }

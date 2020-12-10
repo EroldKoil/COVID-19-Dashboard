@@ -19,6 +19,9 @@
       -o-transition: bottom 1s;
       min-width: 500px;
       margin: 0 auto;
+      z-index: 6;
+      transform: scale(0.7);
+      bottom: -6%;
     }
     
     .keyboardContainerHidden {
@@ -93,7 +96,7 @@
     
     .keyboard {
       width: 99%;
-      margin: 0 0 0 auto;
+      margin: 0 auto;
       border-radius: 8px;
       background: linear-gradient(45deg, black, transparent, black), #000000b0;
       display: flex;
