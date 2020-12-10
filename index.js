@@ -23,8 +23,59 @@ const dashboard = {
     period: 'full',
     absValue: 'abs'
   },
-  allInfo: {}
+  allInfo: {},
+  worldInfo: {},
+  lastApdate: 0,
 
+  addCovidInfo() {
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    fetch("https://api.covid19api.com/summary", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        let object = JSON.parse(result);
+        object.Countries.forEach((el) => {
+          this.allInfo[el.Country] = {
+            NewConfirmed: el.NewConfirmed,
+            NewDeaths: el.NewDeaths,
+            NewRecovered: el.NewRecovered,
+            TotalConfirmed: el.TotalConfirmed,
+            TotalDeaths: el.TotalDeaths,
+            TotalRecovered: el.TotalRecovered
+          }
+        });
+        this.worldInfo = {
+          NewConfirmed: object.Global.NewConfirmed,
+          NewDeaths: object.Global.NewDeaths,
+          NewRecovered: object.Global.NewRecovered,
+          TotalConfirmed: object.Global.TotalConfirmed,
+          TotalDeaths: object.Global.TotalDeaths,
+          TotalRecovered: object.Global.TotalRecovered
+        }
+        this.lastApdate = object.Countries[0].Date;
+        this.addPopulationAndFlag();
+      })
+      .catch(error => console.log('error', error));
+  },
+
+  addPopulationAndFlag() {
+    fetch("https://restcountries.eu/rest/v2/all?fields=name;population;flag")
+      .then(response => response.text())
+      .then(result => {
+        let object = JSON.parse(result);
+        object.forEach((el) => {
+          if (this.allInfo[el.name] !== undefined) {
+            this.allInfo[el.name].flag = el.flag.substr(el.flag.length - 7, 3);
+            this.allInfo[el.name].population = el.population;
+          }
+
+        });
+        createSecondTable(this.allInfo, 'Confirmed', 'Total');
+      })
+      .catch(error => console.log('error', error));
+  }
 }
 
 function addListeners() {
@@ -101,15 +152,14 @@ function selectCountry(tag) {
 // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
 
 function createSecondTable(array, argument, period, absValue) {
-  console.log('createSecondTable');
-  console.log(array);
   let str = '';
   let arraySort = [];
 
-  array.forEach((el) => {
+  for (key in array) {
+    let el = array[key];
     let number = el[period + argument];
-    let obj = { name: el.Country, num: number };
-    console.log('a');
+    let obj = { name: key, num: number, flag: el.flag };
+
     if (arraySort.length === 0) {
       arraySort.push(obj);
     } else {
@@ -125,32 +175,18 @@ function createSecondTable(array, argument, period, absValue) {
         arraySort.push(obj);
       }
     }
-  });
+  }
 
 
   arraySort.reverse().forEach((el) => {
     str += `<div class="globalTable__line">
 		<div class="globalTable__line__number">${el.num}</div>
 		<div class="globalTable__line__name">${el.name}</div>
+		<div class="globalTable__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
 		</div>
 		`;
   });
   document.querySelector('.globalTable').innerHTML = str;
-}
-
-function getInfo() {
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
-
-  fetch("https://api.covid19api.com/summary", requestOptions)
-    .then(response => response.text())
-    .then(result => {
-      dashboard.allInfo = JSON.parse(result)
-      createSecondTable(dashboard.allInfo.Countries, 'Confirmed', 'Total');
-    })
-    .catch(error => console.log('error', error));
 }
 
 // Изменяет видимость линий в таблице 1 в зависимости от строки поиска
@@ -164,6 +200,10 @@ function searchCountry(str) {
       el.classList.add('globalTable__line-hidden');
     }
   });
+}
+
+function getInfo() {
+  dashboard.addCovidInfo();
 }
 
 function startSession() {

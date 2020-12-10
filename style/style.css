@@ -134,7 +134,7 @@ body::-webkit-scrollbar {
   align-items: center;
   border-bottom: solid 1px #191919;
   cursor: pointer;
-  padding: 0 14px;
+  padding: 0 7px 0 14px;
 }
 
 .globalTable__line-hidden {
@@ -166,7 +166,7 @@ body::-webkit-scrollbar {
 
 .globalTable__line__number {
   font-size: 26px;
-  text-shadow: 0 0 1px black;
+  text-shadow: 0 0 3px black, 0 0 3px black;
   color: #d40000;
   font-family: fantasy;
 }
@@ -177,6 +177,12 @@ body::-webkit-scrollbar {
   color: #ababab;
   text-transform: capitalize;
   width: 50%;
+}
+
+.globalTable__line__flag {}
+
+.globalTable__line__flag img {
+    width: 27px;
 }
 
 .map {
