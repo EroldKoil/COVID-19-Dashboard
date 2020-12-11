@@ -5,39 +5,41 @@ const dashboard = {
   // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения
   globalTable: {
     argument: 'death',
-    period: 'full',
+    period: 'global',
     absValue: 'abs'
   },
   map: {
     argument: 'death',
-    period: 'full',
+    period: 'global',
     absValue: 'abs'
   },
   miniTable: {
     argument: 'death',
-    period: 'full',
+    period: 'global',
     absValue: 'abs'
   },
   graf: {
     argument: 'death',
-    period: 'full',
+    period: 'global',
     absValue: 'abs'
   },
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
 
+  requestOptions: {
+    method: 'GET',
+    redirect: 'follow'
+  },
+
   addCovidInfo() {
-    let requestOptions = {
-      method: 'GET',
-      redirect: 'follow'
-    };
-    fetch("https://api.covid19api.com/summary", requestOptions)
+    fetch("https://api.covid19api.com/summary", this.requestOptions)
       .then(response => response.text())
       .then(result => {
         let object = JSON.parse(result);
         object.Countries.forEach((el) => {
           this.allInfo[el.Country] = {
+            CountryCode: el.CountryCode,
             NewConfirmed: el.NewConfirmed,
             NewDeaths: el.NewDeaths,
             NewRecovered: el.NewRecovered,
@@ -61,7 +63,7 @@ const dashboard = {
   },
 
   addPopulationAndFlag() {
-    fetch("https://restcountries.eu/rest/v2/all?fields=name;population;flag")
+    fetch("https://restcountries.eu/rest/v2/all?fields=name;population;flag;latlng")
       .then(response => response.text())
       .then(result => {
         let object = JSON.parse(result);
@@ -69,13 +71,64 @@ const dashboard = {
           if (this.allInfo[el.name] !== undefined) {
             this.allInfo[el.name].flag = el.flag.substr(el.flag.length - 7, 3);
             this.allInfo[el.name].population = el.population;
+            this.allInfo[el.name].coords = { lat: el.latlng[0], lon: el.latlng[1] };
           }
-
         });
         createSecondTable(this.allInfo, 'Confirmed', 'Total');
       })
       .catch(error => console.log('error', error));
+  },
+
+
+  addCoordsAndStatsPerDays() {
+    let j = 0;
+    let i = 0;
+    let interval = setInterval(() => {
+      let str = Object.keys(this.allInfo)[i];
+      console.log('country = ' + Object.keys(this.allInfo)[i]);
+      fetch(`https://api.covid19api.com/live/country/${Object.keys(this.allInfo)[i]}/status/confirmed`, this.requestOptions)
+        .then(response => response.text())
+        .then(result => {
+
+          let country = JSON.parse(result);
+          console.log('end ' + str);
+          if (country.success !== false) {
+            console.log('end 2 ' + str);
+            console.log(country);
+            this.allInfo[country[0].CountryCode].coords = { lat: country[0].Lat, lon: country[0].Lon };
+
+            country.forEach((month) => {
+              let m = {
+                Confirmed: month.Confirmed,
+                Deaths: month.Deaths,
+                Recovered: month.Recovered,
+                Active: month.Active,
+                Date: month.Date
+              };
+
+              if (this.allInfo[month.CountryCode].monthInfo) {
+                this.allInfo[month.CountryCode].monthInfo.push(m);
+              } else {
+                this.allInfo[month.CountryCode].monthInfo = [m];
+              };
+            })
+            j++;
+            if (j >= this.allInfo.length) {
+
+            }
+          }
+        }).catch(error => {
+          console.log('error', error);
+          j++;
+        });
+      i++;
+      if (i >= Object.keys(this.allInfo).length) {
+        clearInterval(interval);
+        return;
+      }
+    }, 800);
   }
+
 }
 
 function addListeners() {

@@ -36,21 +36,22 @@ section:hover .fullScreenBtn {
   position: absolute;
   right: 0px;
   top: 0px;
-  border-radius: 50%;
   background: radial-gradient(circle, transparent 30%, black), #000000a6;
   cursor: pointer;
   display: flex;
   opacity: 0;
   align-items: center;
-  justify-content: center;
   transition-duration: 0.5s;
   z-index: 3;
+  border-top-right-radius: 50%;
+  border-bottom-left-radius: 30%;
 }
 
 .fullScreenBtn img {
   width: 65%;
   opacity: 0.4;
   transition-duration: 0.5s;
+  margin: 3% 0 0 14%;
 }
 
 .fullScreenBtn:hover img {
