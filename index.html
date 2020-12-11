@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="style/styleKeyBoard.css">
   <link rel="stylesheet" href="style/style.css">
   <link rel="stylesheet" href="style/styleSearch.css">
+  <link rel="stylesheet" href="style/leaflet.css">
+  <link rel="stylesheet" href="style/styleMap.css">
 </head>
 
 <body>
@@ -49,7 +51,9 @@
     </div>
     <section class="map">
       <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
-      <div class="sectionConttent"></div>
+      <div id="map" class="sectionConttent">
+
+      </div>
     </section>
 
     <div class="grafAndMiniTables">
@@ -90,6 +94,8 @@
   <script src="index.js" defer></script>
   <script src="modules/keyBoard.js" defer></script>
   <script src="modules/keys.js" defer></script>
+  <script src="modules/leaflet.js" defer></script>
+  <script src="modules/map.js" defer></script>
 </body>
 
 </html>
