@@ -124,7 +124,8 @@ section.fullScreen {
 
 .globalTable::-webkit-scrollbar,
 main::-webkit-scrollbar,
-body::-webkit-scrollbar {
+body::-webkit-scrollbar,
+.tabFTable__content::-webkit-scrollbar {
   display: none;
 }
 
@@ -136,6 +137,7 @@ body::-webkit-scrollbar {
   border-bottom: solid 1px #191919;
   cursor: pointer;
   padding: 0 7px 0 14px;
+  transition-duration: 0.5s;
 }
 
 .globalTable__line-hidden {
@@ -165,6 +167,10 @@ body::-webkit-scrollbar {
   background: #6d6d6d3d;
 }
 
+.tabFTable__content .fTableLine:hover {
+  background-color: #212121;
+}
+
 .globalTable__line__number {
   font-size: 26px;
   text-shadow: 0 0 3px black, 0 0 3px black;
@@ -183,31 +189,31 @@ body::-webkit-scrollbar {
 .globalTable__line__flag {}
 
 .globalTable__line__flag img {
-    width: 27px;
+  width: 27px;
 }
 
 .map {
   width: 50%;
 }
 
-.grafAndMiniTables,
+.grafAndTableFirst,
 .globalInfoAndTopNumber {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.grafAndMiniTables {
+.grafAndTableFirst {
   width: 30%;
   height: 100%;
 }
 
-.miniTables {
+.tableFirst {
   height: 59%;
 }
 
-.miniTables .sectionConttent {
-  display: flex;
+.tableFirst .sectionConttent {
+  /* display: flex; */
 }
 
 .graf .sectionConttent {
@@ -216,21 +222,157 @@ body::-webkit-scrollbar {
   align-items: center;
 }
 
-.miniTables .sectionConttent>div {
-  width: 50%;
+.tableFirst .sectionConttent>div {
+  /* width: 50%; */
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+
+.graf {
+  height: 39%;
+}
+
+.tableFirstHeader {
+  height: 20%;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+  border-bottom: solid 2px #5656567d;
+  background-color: #6969695c;
+}
+
+.tabFTable {
+  height: 80%;
+}
+
+.tabFTable__header {
+  border-bottom: solid 2px #000000;
+  background-color: #1715155c;
+  height: 80px;
+}
+
+.fTableLine {
+  display: flex;
+  height: 40px;
+  width: 100%;
+  transition-duration: 0.5s;
+}
+
+.headerTable {}
+
+.tabFTable__header_text {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.miniTables__left {
-  border-right: solid 1px;
+.tabFTable__header_arrows {}
+
+.tabFTable__header_arrows .notActiveArrow {
+  filter: grayscale(1);
 }
 
-.miniTables__right {}
+.sortArrowTop {
+  transform: rotate(180deg);
+}
 
-.graf {
-  height: 39%;
+.sortArrowBottom {}
+
+.sortArrowBottom,
+.sortArrowTop {
+  width: 13px;
+  /* height: 3px; */
+  transition-duration: 0.3s;
+}
+
+.sortArrowBottom:hover,
+.sortArrowTop:hover {
+  filter: drop-shadow(0px 0px 3px #fff) brightness(2.5) grayscale(1);
+}
+
+.sortArrowBottom img,
+.sortArrowTop img {
+  width: 100%;
+}
+
+.sortArrowConfirmed {
+  filter: hue-rotate(241deg);
+}
+
+.fTableLine__Country {
+  width: 30%;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: solid 1px #000;
+  cursor: pointer;
+  color: coral;
+  align-items: center;
+  padding: 0 5px;
+}
+
+.fTableLine__country_text {
+  width: 73%;
+  text-align: start;
+}
+
+.fTableLine__country_flag {
+  width: 17%;
+}
+
+.fTableLine__country_flag img {
+  width: 100%;
+}
+
+.fTableLine__Recovered {
+  color: #a7d6ff;
+}
+
+.fTableLine__Confirmed {
+  color: #5fd46dc7;
+}
+
+.fTableLine__Deaths {
+  color: #ff6565;
+}
+
+.headerTable .fTableLine__Recovered:hover,
+.headerTable .fTableLine__Confirmed:hover,
+.headerTable .fTableLine__Deaths:hover,
+.headerTable .fTableLine__Country:hover {
+  background: #6d6d6d3d;
+}
+
+.headerTable .fTableLine__Recovered,
+.headerTable .fTableLine__Confirmed,
+.headerTable .fTableLine__Deaths,
+.headerTable .fTableLine__Country {
+  justify-content: space-around;
+}
+
+.fTableLine__Recovered,
+.fTableLine__Confirmed,
+.fTableLine__Deaths {
+  width: 22.5%;
+  display: flex;
+  align-items: center;
+  border-bottom: solid 1px #000;
+  border-left: solid 1px #5454548f;
+  cursor: pointer;
+  transition-duration: 0.5s;
+  padding-left: 5px;
+}
+
+.sortArrowRecovered {
+  filter: brightness(6.5);
+}
+
+.sortArrowDeaths {
+  filter: hue-rotate(136deg);
+}
+
+.tabFTable__content {
+  overflow-y: scroll;
+  height: calc(100% - 96px);
 }
 
 @media (max-width: 1400px) {
@@ -245,7 +387,7 @@ body::-webkit-scrollbar {
     width: 70%;
     height: 75%;
   }
-  .grafAndMiniTables {
+  .grafAndTableFirst {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -255,7 +397,7 @@ body::-webkit-scrollbar {
     width: 50%;
     height: 55%;
   }
-  .miniTables {
+  .tableFirst {
     width: 50%;
     height: 55%;
   }

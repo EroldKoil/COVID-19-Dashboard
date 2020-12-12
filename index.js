@@ -1,27 +1,28 @@
-const dashboard = {
+let dashboard = {
   selectedCountry: 'world',
-  // argument - критерий для отбора данных: заражение / смерти / исцеление
-  // period - за какой период рассматривается информация
-  // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения
+  // argument - критерий для отбора данных: ('Confirmed' or 'Deaths' or 'Recovered')
+  // period - за какой период рассматривается информация ('New' or 'Total')
+  // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
   globalTable: {
-    argument: 'death',
-    period: 'global',
-    absValue: 'abs'
+    argument: 'Deaths',
+    period: 'Total',
+    absValue: true
   },
   map: {
-    argument: 'death',
-    period: 'global',
-    absValue: 'abs'
+    argument: 'Deaths',
+    period: 'Total',
+    absValue: true
   },
-  miniTable: {
-    argument: 'death',
-    period: 'global',
-    absValue: 'abs'
+  tableFirst: {
+    sortBy: 'Confirmed',
+    sortReverse: false,
+    period: 'Total',
+    absValue: true
   },
   graf: {
-    argument: 'death',
-    period: 'global',
-    absValue: 'abs'
+    argument: 'Deaths',
+    period: 'Total',
+    absValue: true
   },
   allInfo: {},
   worldInfo: {},
@@ -38,7 +39,8 @@ const dashboard = {
       .then(result => {
         let object = JSON.parse(result);
         object.Countries.forEach((el) => {
-          this.allInfo[el.Country] = {
+          this.allInfo[el.CountryCode] = {
+            Country: el.Country,
             CountryCode: el.CountryCode,
             NewConfirmed: el.NewConfirmed,
             NewDeaths: el.NewDeaths,
@@ -63,18 +65,20 @@ const dashboard = {
   },
 
   addPopulationAndFlag() {
-    fetch("https://restcountries.eu/rest/v2/all?fields=name;population;flag;latlng")
+    fetch("https://restcountries.eu/rest/v2/all?fields=name;population;flag;latlng;alpha2Code")
       .then(response => response.text())
       .then(result => {
         let object = JSON.parse(result);
         object.forEach((el) => {
-          if (this.allInfo[el.name] !== undefined) {
-            this.allInfo[el.name].flag = el.flag.substr(el.flag.length - 7, 3);
-            this.allInfo[el.name].population = el.population;
-            this.allInfo[el.name].coords = { lat: el.latlng[0], lon: el.latlng[1] };
+          if (this.allInfo[el.alpha2Code] !== undefined) {
+            this.allInfo[el.alpha2Code].flag = el.flag.substr(el.flag.length - 7, 3);
+            this.allInfo[el.alpha2Code].population = el.population;
+            this.allInfo[el.alpha2Code].coords = { lat: el.latlng[0], lon: el.latlng[1] };
           }
         });
+        save();
         createSecondTable(this.allInfo, 'Confirmed', 'Total');
+        createFirstTable();
       })
       .catch(error => console.log('error', error));
   },
@@ -188,6 +192,40 @@ function addListeners() {
       selectCountry(target);
     }
   });
+
+  // Изменение сортировки в первой таблице
+  document.querySelector('.headerTable').addEventListener('click', (event) => {
+    let target = event.target;
+    let sortBy = '';
+
+    let changeView = () => {
+      dashboard.tableFirst.sortBy = sortBy;
+      console.log('sortBy = ' + dashboard.tableFirst.sortBy);
+      console.log('revers = ' + dashboard.tableFirst.sortReverse);
+      document.querySelector('.tabFTable__header_arrows div:not(.notActiveArrow)').classList.toggle('notActiveArrow');
+      document.querySelector(`.fTableLine__${dashboard.tableFirst.sortBy} .sortArrow${dashboard.tableFirst.sortReverse?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+      createFirstTable();
+    }
+
+    if (target.tagName === 'IMG' || target.classList[0] === 'tabFTable__header_arrows' || target.className === 'tabFTable__header_text') {
+      target = target.parentElement;
+    }
+    if (target.classList[0] === 'sortArrowTop' || target.classList[0] === 'sortArrowBottom') {
+      console.log('arrow');
+      if (target.classList.contains('notActiveArrow')) {
+        sortBy = target.parentElement.parentElement.className.substr(12);
+        dashboard.tableFirst.sortReverse = target.classList.contains('sortArrowTop');
+        changeView();
+      }
+    } else {
+      sortBy = target.className.substr(12);
+      if (sortBy !== dashboard.tableFirst.sortBy) {
+        dashboard.tableFirst.sortReverse = true;
+      }
+      dashboard.tableFirst.sortReverse = !dashboard.tableFirst.sortReverse;
+      changeView();
+    }
+  });
 }
 
 
@@ -211,7 +249,7 @@ function createSecondTable(array, argument, period, absValue) {
   for (key in array) {
     let el = array[key];
     let number = el[period + argument];
-    let obj = { name: key, num: number, flag: el.flag };
+    let obj = { name: dashboard.allInfo[key].Country, num: number, flag: el.flag, slug: key };
 
     if (arraySort.length === 0) {
       arraySort.push(obj);
@@ -232,7 +270,7 @@ function createSecondTable(array, argument, period, absValue) {
 
 
   arraySort.reverse().forEach((el) => {
-    str += `<div class="globalTable__line">
+    str += `<div class="globalTable__line" name="${el.slug}">
 		<div class="globalTable__line__number">${el.num}</div>
 		<div class="globalTable__line__name">${el.name}</div>
 		<div class="globalTable__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
@@ -240,6 +278,36 @@ function createSecondTable(array, argument, period, absValue) {
 		`;
   });
   document.querySelector('.globalTable').innerHTML = str;
+}
+
+function createFirstTable() {
+  let str = '';
+  let arraySort = getSortedArray(dashboard.tableFirst.sortBy, dashboard.tableFirst.sortReverse, dashboard.tableFirst.period);
+  let getValue = (param, elem) => {
+    if (dashboard.tableFirst.absValue) {
+      return elem[dashboard.tableFirst.period + param];
+    } else {
+      return 100000 / elem.population * +elem[dashboard.tableFirst.period + param];
+    }
+  }
+  arraySort.forEach((el) => {
+    str += `
+		<div class="fTableLine">
+			<div class="fTableLine__Country">
+				<div class="fTableLine__country_text">${el.Country}</div>
+				<div class="fTableLine__country_flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
+			</div>
+			<div class="fTableLine__Confirmed">${getValue('Confirmed' , el)}</div>
+			<div class="fTableLine__Recovered">${getValue('Recovered' , el)}</div>
+			<div class="fTableLine__Deaths">${getValue('Deaths' , el)}</div>
+		</div>
+		`;
+  });
+  document.querySelector('.fTableGlobal .fTableLine__Confirmed').innerText = getValue('Confirmed', dashboard.worldInfo);
+  document.querySelector('.fTableGlobal .fTableLine__Recovered').innerText = getValue('Recovered', dashboard.worldInfo);
+  document.querySelector('.fTableGlobal .fTableLine__Deaths').innerText = getValue('Deaths', dashboard.worldInfo);
+
+  document.querySelector('.tabFTable__content').innerHTML = str;
 }
 
 // Изменяет видимость линий в таблице 1 в зависимости от строки поиска
@@ -255,13 +323,57 @@ function searchCountry(str) {
   });
 }
 
+function getSortedArray(sortBy, sortReverse, period) {
+  let arraySort = [];
+
+  for (key in dashboard.allInfo) {
+    let el = dashboard.allInfo[key];
+    if (sortBy !== 'Country') {
+      let number = el[period + sortBy];
+
+      if (arraySort.length === 0) {
+        arraySort.push(el);
+      } else {
+        let flag = false;
+        for (let i = 0; i < arraySort.length; i++) {
+          if (arraySort[i][period + sortBy] >= number && (i === 0 || (arraySort[i - 1][period + sortBy] <= number))) {
+            arraySort.splice(i, 0, el);
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          arraySort.push(el);
+        }
+      }
+    } else {
+      arraySort.push(el);
+    }
+  }
+  if (!sortReverse) {
+    arraySort = arraySort.reverse()
+  }
+  return arraySort;
+}
+
 function getInfo() {
-  dashboard.addCovidInfo();
+  if (localStorage.getItem('covidLocalDataBase')) {
+    dashboard = JSON.parse(localStorage.getItem('covidLocalDataBase'));
+    createSecondTable(dashboard.allInfo, 'Confirmed', 'Total');
+    createFirstTable()
+  } else {
+    dashboard.addCovidInfo();
+  }
+
 }
 
 function startSession() {
   addListeners();
   getInfo();
+}
+
+function save() {
+  localStorage.setItem('covidLocalDataBase', JSON.stringify(dashboard));
 }
 
 startSession();
