@@ -3,24 +3,9 @@ let dashboard = {
   // argument - критерий для отбора данных: ('Confirmed' or 'Deaths' or 'Recovered')
   // period - за какой период рассматривается информация ('New' or 'Total')
   // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
-  globalTable: {
-    argument: 'Deaths',
-    period: 'Total',
-    absValue: true
-  },
-  map: {
-    argument: 'Deaths',
-    period: 'Total',
-    absValue: true
-  },
-  tableFirst: {
+  arguments: {
     sortBy: 'Confirmed',
     sortReverse: false,
-    period: 'Total',
-    absValue: true
-  },
-  graf: {
-    argument: 'Deaths',
     period: 'Total',
     absValue: true
   },
@@ -84,7 +69,7 @@ let dashboard = {
   },
 
 
-  addCoordsAndStatsPerDays() {
+  addStatsPerDays() {
     let j = 0;
     let i = 0;
     let interval = setInterval(() => {
@@ -199,11 +184,11 @@ function addListeners() {
     let sortBy = '';
 
     let changeView = () => {
-      dashboard.tableFirst.sortBy = sortBy;
-      console.log('sortBy = ' + dashboard.tableFirst.sortBy);
-      console.log('revers = ' + dashboard.tableFirst.sortReverse);
+      dashboard.arguments.sortBy = sortBy;
+      console.log('sortBy = ' + dashboard.arguments.sortBy);
+      console.log('revers = ' + dashboard.arguments.sortReverse);
       document.querySelector('.tabFTable__header_arrows div:not(.notActiveArrow)').classList.toggle('notActiveArrow');
-      document.querySelector(`.fTableLine__${dashboard.tableFirst.sortBy} .sortArrow${dashboard.tableFirst.sortReverse?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+      document.querySelector(`.fTableLine__${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverse?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
       createFirstTable();
     }
 
@@ -214,15 +199,15 @@ function addListeners() {
       console.log('arrow');
       if (target.classList.contains('notActiveArrow')) {
         sortBy = target.parentElement.parentElement.className.substr(12);
-        dashboard.tableFirst.sortReverse = target.classList.contains('sortArrowTop');
+        dashboard.arguments.sortReverse = target.classList.contains('sortArrowTop');
         changeView();
       }
     } else {
       sortBy = target.className.substr(12);
-      if (sortBy !== dashboard.tableFirst.sortBy) {
-        dashboard.tableFirst.sortReverse = true;
+      if (sortBy !== dashboard.arguments.sortBy) {
+        dashboard.arguments.sortReverse = true;
       }
-      dashboard.tableFirst.sortReverse = !dashboard.tableFirst.sortReverse;
+      dashboard.arguments.sortReverse = !dashboard.arguments.sortReverse;
       changeView();
     }
   });
@@ -280,16 +265,18 @@ function createSecondTable(array, argument, period, absValue) {
   document.querySelector('.globalTable').innerHTML = str;
 }
 
+function getValue(param, elem) {
+  if (dashboard.arguments.absValue) {
+    return elem[dashboard.arguments.period + param];
+  } else {
+    return 100000 / elem.population * +elem[dashboard.arguments.period + param];
+  }
+}
+
 function createFirstTable() {
   let str = '';
-  let arraySort = getSortedArray(dashboard.tableFirst.sortBy, dashboard.tableFirst.sortReverse, dashboard.tableFirst.period);
-  let getValue = (param, elem) => {
-    if (dashboard.tableFirst.absValue) {
-      return elem[dashboard.tableFirst.period + param];
-    } else {
-      return 100000 / elem.population * +elem[dashboard.tableFirst.period + param];
-    }
-  }
+  let arraySort = getSortedArray(dashboard.arguments.sortBy, dashboard.arguments.sortReverse, dashboard.arguments.period);
+
   arraySort.forEach((el) => {
     str += `
 		<div class="fTableLine">

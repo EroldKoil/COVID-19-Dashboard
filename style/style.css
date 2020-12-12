@@ -165,6 +165,7 @@ body::-webkit-scrollbar,
 .globalTable__line:hover,
 .globalTable__line_selected {
   background: #6d6d6d3d;
+  background-color: #212121;
 }
 
 .tabFTable__content .fTableLine:hover {
