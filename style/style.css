@@ -5,6 +5,7 @@ body {
   height: 100vh;
   min-width: 500px;
   padding: 10px 0;
+  overflow: hidden;
 }
 
 main {
@@ -61,7 +62,7 @@ section:hover .fullScreenBtn {
 section.fullScreen {
   position: absolute;
   width: 98%;
-  height: 98%;
+  height: 80%;
   left: 1%;
   top: 1%;
   z-index: 5;
@@ -73,12 +74,13 @@ section.fullScreen {
   z-index: 2;
 }
 
-.globalInfoAndTopNumber {
-  width: 19%;
+.mapAndControl {
+  width: 49%;
+  height: 100%;
 }
 
 .topNumber {
-  height: 18%;
+  height: 29%;
   width: 100%;
 }
 
@@ -104,13 +106,13 @@ section.fullScreen {
 }
 
 .globalInfo {
-  height: 80%;
-  width: 100%;
+  height: 100%;
+  width: 20%;
 }
 
 .globalInfo__header {
-  height: 20%;
-  border-bottom: solid 1px #585858;
+  height: 77px;
+  border-bottom: solid 2px #585858;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -119,15 +121,38 @@ section.fullScreen {
 .globalInfo__top {}
 
 .globalTable {
-  height: 79%;
+  height: calc(100% - 95px);
   overflow-y: scroll;
 }
 
 .globalTable::-webkit-scrollbar,
 main::-webkit-scrollbar,
 body::-webkit-scrollbar,
-.tabFTable__content::-webkit-scrollbar {
+.tabFTable__content::-webkit-scrollbar {}
+
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-button {
   display: none;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: #999;
+}
+
+*::-webkit-scrollbar-track-piece {
+  background-color: #000000ba;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  border-radius: 0px;
+}
+
+*::-webkit-resizer {
+  background-color: #666;
 }
 
 .globalTable__line {
@@ -195,11 +220,12 @@ body::-webkit-scrollbar,
 }
 
 .map {
-  width: 50%;
+  width: 100%;
+  height: 70%;
 }
 
 .grafAndTableFirst,
-.globalInfoAndTopNumber {
+.mapAndControl {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -248,8 +274,8 @@ body::-webkit-scrollbar,
 }
 
 .tabFTable__header {
+  /* background-color: #1715155c; */
   border-bottom: solid 2px #000000;
-  background-color: #1715155c;
   height: 80px;
 }
 
@@ -260,7 +286,10 @@ body::-webkit-scrollbar,
   transition-duration: 0.5s;
 }
 
-.headerTable {}
+.headerTable {
+  background-color: #1715155c;
+  border-bottom: solid 2px #000000;
+}
 
 .tabFTable__header_text {
   display: flex;
@@ -282,8 +311,7 @@ body::-webkit-scrollbar,
 
 .sortArrowBottom,
 .sortArrowTop {
-  width: 13px;
-  /* height: 3px; */
+  width: 10px;
   transition-duration: 0.3s;
 }
 
@@ -315,10 +343,12 @@ body::-webkit-scrollbar,
 .fTableLine__country_text {
   width: 73%;
   text-align: start;
+  font-size: 13px;
 }
 
 .fTableLine__country_flag {
   width: 17%;
+  max-width: 38px;
 }
 
 .fTableLine__country_flag img {
@@ -377,18 +407,15 @@ body::-webkit-scrollbar,
   height: calc(100% - 96px);
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1023px) {
   main {
     flex-wrap: wrap;
   }
-  .globalInfoAndTopNumber {
-    width: 29%;
-    height: 75%;
+  .mapAndControl {
+    width: 60%;
+    height: 100%;
   }
-  .map {
-    width: 70%;
-    height: 75%;
-  }
+  .map {}
   .grafAndTableFirst {
     display: flex;
     flex-direction: row;

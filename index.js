@@ -185,8 +185,6 @@ function addListeners() {
 
     let changeView = () => {
       dashboard.arguments.sortBy = sortBy;
-      console.log('sortBy = ' + dashboard.arguments.sortBy);
-      console.log('revers = ' + dashboard.arguments.sortReverse);
       document.querySelector('.tabFTable__header_arrows div:not(.notActiveArrow)').classList.toggle('notActiveArrow');
       document.querySelector(`.fTableLine__${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverse?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
       createFirstTable();
@@ -196,7 +194,6 @@ function addListeners() {
       target = target.parentElement;
     }
     if (target.classList[0] === 'sortArrowTop' || target.classList[0] === 'sortArrowBottom') {
-      console.log('arrow');
       if (target.classList.contains('notActiveArrow')) {
         sortBy = target.parentElement.parentElement.className.substr(12);
         dashboard.arguments.sortReverse = target.classList.contains('sortArrowTop');
@@ -209,6 +206,96 @@ function addListeners() {
       }
       dashboard.arguments.sortReverse = !dashboard.arguments.sortReverse;
       changeView();
+    }
+  });
+
+  // Работа переключателей
+  document.querySelectorAll('.argum-changer__button').forEach(el => {
+    el.style.right = '1%';
+    el.onmousedown = (event) => {
+      let oldArguments = Object.assign({}, dashboard.arguments);
+      let coordX = event.clientX;
+      let containerWidth = el.parentElement.offsetWidth;
+      let elName = el.getAttribute('name');
+      let right = el.style.right.substr(0, el.style.right.length - 1);
+      let argumentDom = document.querySelector(`.argum-container[name=${elName}]`);
+      let coordXMin;
+      let coordXMax;
+      let newRight = right;
+      let percentMax = 78;
+      let percentMin = 1;
+
+
+      if (dashboard.arguments[elName] === true ||
+        dashboard.arguments[elName] === 'Total' ||
+        dashboard.arguments[elName] === 'Confirmed') {
+        coordXMin = coordX - containerWidth * percentMax / 100;
+        coordXMax = coordX;
+      } else if (dashboard.arguments[elName] === false ||
+        dashboard.arguments[elName] === 'New' ||
+        dashboard.arguments[elName] === 'Deaths') {
+        coordXMin = coordX;
+        coordXMax = coordX + containerWidth * percentMax / 100;
+      } else {
+        coordXMin = coordX - containerWidth / 2 * percentMax / 100;
+        coordXMax = coordX + containerWidth / 2 * percentMax / 100;
+      }
+
+      document.onmouseup = () => {
+        el.style.transitionDuration = '0.3s';
+        argumentDom.style.transitionDuration = '0.3s';
+
+        if (el.getAttribute('argumentsCount') === '3') {
+          if (newRight < percentMax / 4) {
+            newRight = percentMin;
+            dashboard.arguments.sortBy = 'Confirmed';
+          } else if (newRight >= percentMax / 4 && newRight < percentMax / 4 * 3) {
+            newRight = percentMax / 2;
+            dashboard.arguments.sortBy = 'Recovered';
+          } else {
+            newRight = percentMax;
+            dashboard.arguments.sortBy = 'Deaths';
+          }
+          el.style.right = `${newRight}%`;
+          argumentDom.style.left = `-${(newRight - 1) / 7 * 18}%`;
+        } else {
+          if (newRight < percentMax / 2) {
+            newRight = percentMin;
+            dashboard.arguments[elName] = elName === 'period' ? 'Total' : true;
+          } else {
+            newRight = percentMax;
+            dashboard.arguments[elName] = elName === 'period' ? 'New' : false;
+          }
+          el.style.right = `${newRight}%`;
+          argumentDom.style.left = `-${(newRight - percentMin) / (percentMax - percentMin) * 100}%`;
+        }
+        Object.keys(dashboard.arguments).forEach(key => {
+          if (dashboard.arguments[key] !== oldArguments[key]) {
+            createFirstTable();
+          }
+        });
+        document.onmousemove = null;
+        document.onmouseup = null;
+      }
+
+      document.onmousemove = (event1) => {
+        el.style.transitionDuration = '0s';
+        argumentDom.style.transitionDuration = '0s';
+        if (event1.clientX < coordXMin) {
+          newRight = percentMax;
+        } else if (event1.clientX > coordXMax) {
+          newRight = percentMin;
+        } else {
+          newRight = +right + (100 / containerWidth * (coordX - event1.clientX));
+        }
+        el.style.right = `${newRight}%`;
+
+        if (el.getAttribute('argumentsCount') === '3') {
+          argumentDom.style.left = `-${(newRight - 1) / 7 * 6 * 3}%`;
+        } else {
+          argumentDom.style.left = `-${(newRight - 1) / 77 * 100}%`;
+        }
+      }
     }
   });
 }
@@ -269,7 +356,7 @@ function getValue(param, elem) {
   if (dashboard.arguments.absValue) {
     return elem[dashboard.arguments.period + param];
   } else {
-    return 100000 / elem.population * +elem[dashboard.arguments.period + param];
+    return Math.floor(100000 / elem.population * +elem[dashboard.arguments.period + param]);
   }
 }
 

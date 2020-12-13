@@ -1,487 +1,477 @@
-    .textArea {
-      /* height: 20px; */
-      /* width: 200px; */
-      /* resize: none; */
-      /* margin: 0 auto; */
-      /* font-size: 16px; */
-      /* outline: none; */
-      /* display: none; */
-    }
-    
-    .keyboardContainer {
-      position: fixed;
-      width: 98%;
-      bottom: 0;
-      transition: bottom 1s;
-      -webkit-transition: bottom 1s;
-      -moz-transition: bottom 1s;
-      -ms-transition: bottom 1s;
-      -o-transition: bottom 1s;
-      min-width: 500px;
-      margin: 0 auto;
-      z-index: 6;
-      transform: scale(0.7);
-      bottom: -6%;
-    }
-    
-    .keyboardContainerHidden {
-      bottom: -100%;
-    }
-    
-    .closeKeyboard {
-      height: 30px;
-      background-color: black;
-      width: 60px;
-      max-width: 1280px;
-      margin: 0 auto;
-      border-top-left-radius: 51px;
-      border-top-right-radius: 50px;
-      background: radial-gradient(circle, transparent, black), #000000a6;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    
-    .closeKeyboard:hover {
-      background: radial-gradient(circle, transparent 5%, black 90%),#000000a6;
-    }
-    
-    .closeKeyboard div {
-      color: rgb(5, 230, 35);
-      text-shadow: 0px 0px 9px rgb(29 185 50), 0px 0px 4px rgb(0, 0, 0);
-      transform: rotate(90deg);
-      height: 50%;
-      display: inline-block;
-      position: relative;
-      animation: closeArrow 3s infinite;
-      -webkit-animation: closeArrow 3s infinite;
-      line-height: 15px;
-    }
-    
-    @keyframes closeArrow {
-      0% {
-        top: -30px;
-      }
-      100% {
-        top: 50px;
-      }
-    }
-    
-    #ArrowLeft svg {
-      transform: rotate(180deg);
-    }
-    
-    #ArrowDown svg {
-      width: 70%;
-      transform: rotate(90deg);
-    }
-    
-    #ArrowUp svg {
-      width: 70%;
-      transform: rotate(270deg);
-    }
-    
-    .arrow svg {
-      width: 80%;
-      max-width: 40px;
-      max-height: 40px;
-    }
-    
-    .arrow svg path {
-      fill: rgb(5, 230, 35);
-      box-shadow: 0 0 black;
-    }
-    
-    .keyboard {
-      width: 99%;
-      margin: 0 auto;
-      border-radius: 8px;
-      background: linear-gradient(45deg, black, transparent, black), #000000b0;
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 1280px;
-      justify-content: space-between;
-      padding: 10px 0 10px 0;
-    }
-    
-    .backspace .keyContent,
-    .tab .keyContent,
-    .capsLock .keyContent,
-    .enter .keyContent,
-    .shift .keyContent,
-    .langBtn .keyContent,
-    .voiceRecord .keyContent,
-    .space .keyContent,
-    .delete .keyContent,
-    .arrow .keyContent,
-    .ctrl .keyContent {
-      font-size: 18px;
-    }
-    
-    .key .keyContent {
-      font-size: 35px;
-    }
-    
-    .key,
-    .backspace,
-    .tab,
-    .capsLock,
-    .enter,
-    .shift,
-    .langBtn,
-    .voiceRecord,
-    .space,
-    .delete,
-    .arrow,
-    .ctrl {
-      display: flex;
-      height: 5.5vw;
-      width: 6%;
-      max-width: 77.9px;
-      margin: 4.3px 0.3%;
-      justify-content: center;
-      border-radius: 5px;
-      align-items: center;
-      font-size: 18px;
-      cursor: pointer;
-      -moz-user-select: none;
-      -khtml-user-select: none;
-      user-select: none;
-      font-weight: 900;
-      position: relative;
-      color: rgb(5, 230, 35);
-      top: 0px;
-      left: 0px;
-      box-shadow: inset 0px 0px 2px 0px #39bb16, 0px 5px 0px 0px #3a5233, 3px 4px 4px 3px black;
-      text-shadow: 0px 0px 0px rgb(5, 230, 35), 0px 0px 4px rgb(0, 0, 0);
-      transition: 0.3s;
-      height: 70px;
-      font-family: monospace;
-    }
-    
-    .dontPress {
-      animation: pressing 0.4s 0.4s reverse forwards;
-      -webkit-animation: pressing 0.4s 0.4s reverse forwards;
-    }
-    
-    .press {
-      top: 5px;
-      left: 1px;
-      text-shadow: 0px 0px 7px rgb(0 255 34), 0px 0px 4px rgb(0, 0, 0);
-      box-shadow: inset 0px 0px 5px 2px #3aff04, 0px 0px 0px 0px #6fea4b, 0px 0px 0px 0px black;
-      background: radial-gradient(circle, transparent, black);
-    }
-    
-    .pressMouse {
-      animation: pressing 0.4s forwards;
-      -webkit-animation: pressing 0.4s forwards;
-    }
-    
-    @keyframes pressing {
-      0% {
-        top: 0px;
-        left: 0px;
-        box-shadow: inset 0px 0px 3px 2px #1a6506, 1px 5px 0px 0px #162113, 3px 4px 4px 3px black;
-        text-shadow: 0px 0px 0px rgb(5, 230, 35), 0px 0px 4px rgb(0, 0, 0);
-        background: linear-gradient(45deg, black, transparent, black);
-      }
-      100% {
-        top: 5px;
-        left: 1px;
-        text-shadow: 0px 0px 7px rgb(0 255 34), 0px 0px 4px rgb(0, 0, 0);
-        box-shadow: 0px 0px 0px 1px black, 0px 0px 1px 1px rgb(5, 230, 35), 0px 0px 1px 2px rgb(5, 230, 35), 0px 0px 6px 1px rgb(5, 230, 35);
-        background: radial-gradient(circle, transparent, black);
-      }
-    }
-    
-    .key img {
-      -moz-user-select: none;
-      -khtml-user-select: none;
-      user-select: none;
-    }
-    
-    .backspace {
-      width: 12%;
-      max-width: 153.5px;
-    }
-    
-    .tab {
-      width: 7.6%;
-      max-width: 97.25px;
-    }
-    
-    .capsLock {
-      width: 9.2%;
-      max-width: 117.75px;
-      text-align: center;
-    }
-    
-    .delete {
-      width: 8.8%;
-      max-width: 112.6px;
-    }
-    
-    .langBtn {
-      width: 5.8%;
-      max-width: 75.2px;
-    }
-    
-    .enter {
-      width: 10.5%;
-      max-width: 136px;
-    }
-    
-    .shift {
-      width: 12.4%;
-      max-width: 158.7px;
-    }
-    
-    .voiceRecord {
-      width: 5%;
-      max-width: 64.2px;
-    }
-    
-    .voiceRecord svg {
-      width: 60%;
-      height: 100%;
-    }
-    
-    .voiceRecord svg path {
-      fill: rgb(5, 230, 35);
-    }
-    
-    .selected svg path {
-      fill: rgb(230 5 74);
-    }
-    
-    .space {
-      width: 58.7%;
-      max-width: 845px;
-    }
-    
-    .ctrl {
-      width: 5.7vw;
-    }
-    
-    .selected {
-      top: 5px;
-      left: 1px;
-      text-shadow: 0px 0px 7px rgb(0 255 34), 0px 0px 4px rgb(0, 0, 0);
-      box-shadow: 0px 0px 0px 1px black, 0px 0px 1px 1px rgb(5, 230, 35), 0px 0px 1px 2px rgb(5, 230, 35), 0px 0px 6px 1px rgb(5, 230, 35);
-      background: radial-gradient(circle, transparent, #0e4404);
-    }
-    
-    .key:hover,
-    .backspace:hover,
-    .tab:hover,
-    .capsLock:hover,
-    .enter:hover,
-    .shift:hover,
-    .alt:hover,
-    .space:hover,
-    .delete:hover,
-    .ctrl:hover {
-      opacity: 0.7;
-    }
-    
-    .image {
-      height: 31%;
-    }
-    
-    .keyContent {
-      -webkit-transition: 0.6s;
-      -webkit-transform-style: preserve-3d;
-      -ms-transition: 0.6s;
-      -moz-transition: 0.6s;
-      -moz-transform: perspective(1000px);
-      -moz-transform-style: preserve-3d;
-      -ms-transform-style: preserve-3d;
-      transition: 0.8s;
-      transform-style: preserve-3d;
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .turned .keyContent {
-      transform: rotateY(180deg);
-    }
-    
-    .keyContent .keyFront {
-      -webkit-transform: rotateY(0deg);
-      -ms-transform: rotateY(0deg);
-      z-index: 2;
-    }
-    
-    .keyContent .keyBack {
-      -webkit-transform: rotateY(-180deg);
-      -moz-transform: rotateY(-180deg);
-      -o-transform: rotateY(-180deg);
-      -ms-transform: rotateY(-180deg);
-      transform: rotateY(-180deg);
-    }
-    
-    .keyBack,
-    .keyFront {
-      -webkit-backface-visibility: hidden;
-      -moz-backface-visibility: hidden;
-      -ms-backface-visibility: hidden;
-      backface-visibility: hidden;
-      -webkit-transition: 0.6s;
-      -webkit-transform-style: preserve-3d;
-      -webkit-transform: rotateY(0deg);
-      -moz-transition: 0.6s;
-      -moz-transform-style: preserve-3d;
-      -moz-transform: rotateY(0deg);
-      -o-transition: 0.6s;
-      -o-transform-style: preserve-3d;
-      -o-transform: rotateY(0deg);
-      -ms-transition: 0.6s;
-      -ms-transform-style: preserve-3d;
-      -ms-transform: rotateY(0deg);
-      transition: 0.6s;
-      transform-style: preserve-3d;
-      transform: rotateY(0deg);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .muteButton {
-      position: fixed;
-      left: 10px;
-      top: 40vh;
-      width: 50px;
-      height: 50px;
-      background-color: aliceblue;
-      border-radius: 50%;
-      box-shadow: 0px 0px 7px 3px white;
-      cursor: pointer;
-      transition: 0.6s;
-    }
-    
-    .muteButton:hover {
-      box-shadow: 0px 0px 7px 5px white;
-    }
-    
-    .muteButton img {
-      width: 100%;
-    }
-    
-    @media (max-width: 1050px) {
-      .backspace,
-      .tab,
-      .capsLock,
-      .enter,
-      .shift,
-      .langBtn,
-      .voiceRecord,
-      .space,
-      .delete,
-      .arrow,
-      .ctrl {
-        font-size: 16px;
-      }
-      .key .keyContent {
-        font-size: 30px;
-      }
-      .key,
-      .backspace,
-      .tab,
-      .capsLock,
-      .enter,
-      .shift,
-      .langBtn,
-      .voiceRecord,
-      .space,
-      .delete,
-      .arrow,
-      .ctrl {
-        height: 6vh;
-      }
-    }
-    
-    @media (max-width: 850px) {
-      .key .keyContent {
-        font-size: 20px;
-      }
-      .capsLock {
-        width: 9.2%;
-        max-width: 117.75px;
-        font-size: 13px;
-        content: 'Caps';
-        padding-left: 0px;
-        font-size: 13px;
-        padding: 0 3px;
-      }
-      .tab {
-        width: 7.6%;
-        max-width: 97.25px;
-      }
-      .delete {
-        width: 8.8%;
-        max-width: 112.6px;
-      }
-      .langBtn {
-        width: 8.8%;
-        max-width: 75.2px;
-      }
-      .enter {
-        width: 10.5%;
-        max-width: 136px;
-      }
-      .shift {
-        max-width: 158.7px;
-      }
-      .voiceRecord {
-        width: 5%;
-        max-width: 64.2px;
-      }
-      .space {
-        width: 52.2%;
-        max-width: 845px;
-      }
-      .ctrl {
-        font-size: 14px;
-        width: 8.5%;
-      }
-      .backspace {
-        font-size: 11.5px;
-      }
-      .image {
-        height: 26%;
-      }
-      .voiceRecord svg {
-        width: 70%;
-        height: 100%;
-      }
-      .arrow svg {
-        width: 60%;
-        max-width: 40px;
-      }
-      .key,
-      .backspace,
-      .tab,
-      .capsLock,
-      .enter,
-      .shift,
-      .langBtn,
-      .voiceRecord,
-      .space,
-      .delete,
-      .arrow,
-      .ctrl {
-        height: 6vh;
-      }
-    }
+.keyboardContainer {
+  position: fixed;
+  width: 98%;
+  bottom: 0;
+  transition: bottom 1s;
+  -webkit-transition: bottom 1s;
+  -moz-transition: bottom 1s;
+  -ms-transition: bottom 1s;
+  -o-transition: bottom 1s;
+  min-width: 500px;
+  margin: 0 auto;
+  z-index: 6;
+  transform: scale(0.7);
+  bottom: -6%;
+}
+
+.keyboardContainerHidden {
+  bottom: -100%;
+}
+
+.closeKeyboard {
+  height: 30px;
+  background-color: black;
+  width: 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+  border-top-left-radius: 51px;
+  border-top-right-radius: 50px;
+  background: radial-gradient(circle, transparent, black), #000000a6;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.closeKeyboard:hover {
+  background: radial-gradient(circle, transparent 5%, black 90%), #000000a6;
+}
+
+.closeKeyboard div {
+  color: rgb(5, 230, 35);
+  text-shadow: 0px 0px 9px rgb(29 185 50), 0px 0px 4px rgb(0, 0, 0);
+  transform: rotate(90deg);
+  height: 50%;
+  display: inline-block;
+  position: relative;
+  animation: closeArrow 3s infinite;
+  -webkit-animation: closeArrow 3s infinite;
+  line-height: 15px;
+}
+
+@keyframes closeArrow {
+  0% {
+    top: -30px;
+  }
+  100% {
+    top: 50px;
+  }
+}
+
+#ArrowLeft svg {
+  transform: rotate(180deg);
+}
+
+#ArrowDown svg {
+  width: 70%;
+  transform: rotate(90deg);
+}
+
+#ArrowUp svg {
+  width: 70%;
+  transform: rotate(270deg);
+}
+
+.arrow svg {
+  width: 80%;
+  max-width: 40px;
+  max-height: 40px;
+}
+
+.arrow svg path {
+  fill: rgb(5, 230, 35);
+  box-shadow: 0 0 black;
+}
+
+.keyboard {
+  width: 99%;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: linear-gradient(45deg, black, transparent, black), #000000b0;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1280px;
+  justify-content: space-between;
+  padding: 10px 0 10px 0;
+}
+
+.backspace .keyContent,
+.tab .keyContent,
+.capsLock .keyContent,
+.enter .keyContent,
+.shift .keyContent,
+.langBtn .keyContent,
+.voiceRecord .keyContent,
+.space .keyContent,
+.delete .keyContent,
+.arrow .keyContent,
+.ctrl .keyContent {
+  font-size: 18px;
+}
+
+.key .keyContent {
+  font-size: 35px;
+}
+
+.key,
+.backspace,
+.tab,
+.capsLock,
+.enter,
+.shift,
+.langBtn,
+.voiceRecord,
+.space,
+.delete,
+.arrow,
+.ctrl {
+  display: flex;
+  height: 5.5vw;
+  width: 6%;
+  max-width: 77.9px;
+  margin: 4.3px 0.3%;
+  justify-content: center;
+  border-radius: 5px;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
+  font-weight: 900;
+  position: relative;
+  color: rgb(5, 230, 35);
+  top: 0px;
+  left: 0px;
+  box-shadow: inset 0px 0px 2px 0px #39bb16, 0px 5px 0px 0px #3a5233, 3px 4px 4px 3px black;
+  text-shadow: 0px 0px 0px rgb(5, 230, 35), 0px 0px 4px rgb(0, 0, 0);
+  transition: 0.3s;
+  height: 70px;
+  font-family: monospace;
+}
+
+.dontPress {
+  animation: pressing 0.4s 0.4s reverse forwards;
+  -webkit-animation: pressing 0.4s 0.4s reverse forwards;
+}
+
+.press {
+  top: 5px;
+  left: 1px;
+  text-shadow: 0px 0px 7px rgb(0 255 34), 0px 0px 4px rgb(0, 0, 0);
+  box-shadow: inset 0px 0px 5px 2px #3aff04, 0px 0px 0px 0px #6fea4b, 0px 0px 0px 0px black;
+  background: radial-gradient(circle, transparent, black);
+}
+
+.pressMouse {
+  animation: pressing 0.4s forwards;
+  -webkit-animation: pressing 0.4s forwards;
+}
+
+@keyframes pressing {
+  0% {
+    top: 0px;
+    left: 0px;
+    box-shadow: inset 0px 0px 3px 2px #1a6506, 1px 5px 0px 0px #162113, 3px 4px 4px 3px black;
+    text-shadow: 0px 0px 0px rgb(5, 230, 35), 0px 0px 4px rgb(0, 0, 0);
+    background: linear-gradient(45deg, black, transparent, black);
+  }
+  100% {
+    top: 5px;
+    left: 1px;
+    text-shadow: 0px 0px 7px rgb(0 255 34), 0px 0px 4px rgb(0, 0, 0);
+    box-shadow: 0px 0px 0px 1px black, 0px 0px 1px 1px rgb(5, 230, 35), 0px 0px 1px 2px rgb(5, 230, 35), 0px 0px 6px 1px rgb(5, 230, 35);
+    background: radial-gradient(circle, transparent, black);
+  }
+}
+
+.key img {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
+}
+
+.backspace {
+  width: 12%;
+  max-width: 153.5px;
+}
+
+.tab {
+  width: 7.6%;
+  max-width: 97.25px;
+}
+
+.capsLock {
+  width: 9.2%;
+  max-width: 117.75px;
+  text-align: center;
+}
+
+.delete {
+  width: 8.8%;
+  max-width: 112.6px;
+}
+
+.langBtn {
+  width: 5.8%;
+  max-width: 75.2px;
+}
+
+.enter {
+  width: 10.5%;
+  max-width: 136px;
+}
+
+.shift {
+  width: 12.4%;
+  max-width: 158.7px;
+}
+
+.voiceRecord {
+  width: 5%;
+  max-width: 64.2px;
+}
+
+.voiceRecord svg {
+  width: 60%;
+  height: 100%;
+}
+
+.voiceRecord svg path {
+  fill: rgb(5, 230, 35);
+}
+
+.selected svg path {
+  fill: rgb(230 5 74);
+}
+
+.space {
+  width: 58.7%;
+  max-width: 845px;
+}
+
+.ctrl {
+  width: 5.7vw;
+}
+
+.selected {
+  top: 5px;
+  left: 1px;
+  text-shadow: 0px 0px 7px rgb(0 255 34), 0px 0px 4px rgb(0, 0, 0);
+  box-shadow: 0px 0px 0px 1px black, 0px 0px 1px 1px rgb(5, 230, 35), 0px 0px 1px 2px rgb(5, 230, 35), 0px 0px 6px 1px rgb(5, 230, 35);
+  background: radial-gradient(circle, transparent, #0e4404);
+}
+
+.key:hover,
+.backspace:hover,
+.tab:hover,
+.capsLock:hover,
+.enter:hover,
+.shift:hover,
+.alt:hover,
+.space:hover,
+.delete:hover,
+.ctrl:hover {
+  opacity: 0.7;
+}
+
+.image {
+  height: 31%;
+}
+
+.keyContent {
+  -webkit-transition: 0.6s;
+  -webkit-transform-style: preserve-3d;
+  -ms-transition: 0.6s;
+  -moz-transition: 0.6s;
+  -moz-transform: perspective(1000px);
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+  transition: 0.8s;
+  transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.turned .keyContent {
+  transform: rotateY(180deg);
+}
+
+.keyContent .keyFront {
+  -webkit-transform: rotateY(0deg);
+  -ms-transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.keyContent .keyBack {
+  -webkit-transform: rotateY(-180deg);
+  -moz-transform: rotateY(-180deg);
+  -o-transform: rotateY(-180deg);
+  -ms-transform: rotateY(-180deg);
+  transform: rotateY(-180deg);
+}
+
+.keyBack,
+.keyFront {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transition: 0.6s;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform: rotateY(0deg);
+  -moz-transition: 0.6s;
+  -moz-transform-style: preserve-3d;
+  -moz-transform: rotateY(0deg);
+  -o-transition: 0.6s;
+  -o-transform-style: preserve-3d;
+  -o-transform: rotateY(0deg);
+  -ms-transition: 0.6s;
+  -ms-transform-style: preserve-3d;
+  -ms-transform: rotateY(0deg);
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.muteButton {
+  position: fixed;
+  left: 10px;
+  top: 40vh;
+  width: 50px;
+  height: 50px;
+  background-color: aliceblue;
+  border-radius: 50%;
+  box-shadow: 0px 0px 7px 3px white;
+  cursor: pointer;
+  transition: 0.6s;
+}
+
+.muteButton:hover {
+  box-shadow: 0px 0px 7px 5px white;
+}
+
+.muteButton img {
+  width: 100%;
+}
+
+@media (max-width: 1050px) {
+  .backspace,
+  .tab,
+  .capsLock,
+  .enter,
+  .shift,
+  .langBtn,
+  .voiceRecord,
+  .space,
+  .delete,
+  .arrow,
+  .ctrl {
+    font-size: 16px;
+  }
+  .key .keyContent {
+    font-size: 30px;
+  }
+  .key,
+  .backspace,
+  .tab,
+  .capsLock,
+  .enter,
+  .shift,
+  .langBtn,
+  .voiceRecord,
+  .space,
+  .delete,
+  .arrow,
+  .ctrl {
+    height: 6vh;
+  }
+}
+
+@media (max-width: 850px) {
+  .key .keyContent {
+    font-size: 20px;
+  }
+  .capsLock {
+    width: 9.2%;
+    max-width: 117.75px;
+    font-size: 13px;
+    content: 'Caps';
+    padding-left: 0px;
+    font-size: 13px;
+    padding: 0 3px;
+  }
+  .tab {
+    width: 7.6%;
+    max-width: 97.25px;
+  }
+  .delete {
+    width: 8.8%;
+    max-width: 112.6px;
+  }
+  .langBtn {
+    width: 8.8%;
+    max-width: 75.2px;
+  }
+  .enter {
+    width: 10.5%;
+    max-width: 136px;
+  }
+  .shift {
+    max-width: 158.7px;
+  }
+  .voiceRecord {
+    width: 5%;
+    max-width: 64.2px;
+  }
+  .space {
+    width: 52.2%;
+    max-width: 845px;
+  }
+  .ctrl {
+    font-size: 14px;
+    width: 8.5%;
+  }
+  .backspace {
+    font-size: 11.5px;
+  }
+  .image {
+    height: 26%;
+  }
+  .voiceRecord svg {
+    width: 70%;
+    height: 100%;
+  }
+  .arrow svg {
+    width: 60%;
+    max-width: 40px;
+  }
+  .key,
+  .backspace,
+  .tab,
+  .capsLock,
+  .enter,
+  .shift,
+  .langBtn,
+  .voiceRecord,
+  .space,
+  .delete,
+  .arrow,
+  .ctrl {
+    height: 6vh;
+  }
+}

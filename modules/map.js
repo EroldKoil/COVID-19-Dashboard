@@ -78,11 +78,3 @@ document.addEventListener('DOMContentLoaded', () => {
         map.renderCases(dashboard.allInfo);
     }, 1500);
 });
-
-
-/*<div id="popupBlock" class="hide-popup-block">
-        <div class="popup-country"><span class="popup-name"></span></div>
-        <div><span class="popup-population-title">Population: </span><span class="popup-population"></span></div>
-        <div><span class="popup-value-title"></span><span class="popup-value"></span></div>
-        <img class="popup-img">
-      </div>*/
