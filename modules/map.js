@@ -20,29 +20,73 @@ class Map {
         this.map.addLayer(tileLayer);
     }
 
-    renderCases(data) {
+    renderCircleMarker(data) {
         for (let key in data) {
             let percentOfCases = (data[key].TotalConfirmed / dashboard.worldInfo.TotalConfirmed) * 100;
             const casesCircle = L.circleMarker([data[key].coords.lat, data[key].coords.lon], {
-                radius: percentOfCases <1? 4: percentOfCases,
+                radius: percentOfCases < 1 ? 4 : percentOfCases,
                 fill: true,
                 fillColor: '#F73F3F',
                 fillOpacity: 0.7,
                 color: '#F73F3F',
                 opacity: 1,
-                width:5,
+                width: 5,
             });
-            casesCircle.bindTooltip(`<div class="map-toolTip" ><img class="map-toolTip-img" src="https://restcountries.eu/data/${data[key].flag}.svg"><span class="map-toolTip-text">${data[key].Country}</span></div>`).openTooltip();
-
-            casesCircle.on('mouseover',this.showMoreInfo.bind(this,data[key]));
-            casesCircle.on('mouseout',this.hideMoreInfo);
-
             this.map.addControl(casesCircle);
         }
     }
 
-    showMoreInfo(country) {
+
+    renderBorderCountry(dataCountries) {
+        let coordsCountry;
+        let coordinate;
+        let borderCountry;
+
+        for (let key in geoCountries.features) {
+            coordsCountry = this.correctionOfCoords(geoCountries.features[key].geometry.coordinates);
+            coordinate = L.GeoJSON.coordsToLatLngs(coordsCountry, 2);
+            borderCountry = L.polygon(coordinate, {
+                stroke: false,
+                fill: true,
+                fillColor: 'white',
+                fillOpacity: 0
+            });
+
+            this.map.addControl(borderCountry);
+
+            for (let country in dataCountries) {
+                this.initMouseEvent(dataCountries[country], geoCountries.features[key], borderCountry);
+            }
+        }
+    }
+
+    correctionOfCoords(value) {
+        let depthArray = value => {
+            return Array.isArray(value) ?
+                1 + Math.max(...value.map(depthArray)) :
+                0;
+        }
+        return depthArray(value) === 3 ? [value] : value;
+    }
+
+    initMouseEvent(country, countryZone, element) {
         const blockInfoCountry = document.getElementById('popupBlock');
+
+        blockInfoCountry.onmouseover = ()=>{
+            blockInfoCountry.classList.add('show-popup-block');
+            blockInfoCountry.classList.remove('hide-popup-block');
+        }
+        blockInfoCountry.onmouseout = ()=>{
+            blockInfoCountry.classList.remove('show-popup-block');
+            blockInfoCountry.classList.add('hide-popup-block');
+        }
+        if (country.CountryCode.toLowerCase() === countryZone.properties.iso_a2.toLowerCase()) {
+            element.on('mouseover', this.showMoreInfo.bind(element, country, blockInfoCountry));
+            element.on('mouseout', this.hideMoreInfo.bind(element,blockInfoCountry));
+        }
+    }
+
+    showMoreInfo(country, blockInfoCountry) {
         const flagCountry = document.querySelector('.popup-img');
         const nameCountry = document.querySelector('.popup-name');
         const valueCountry = document.querySelector('.popup-value');
@@ -51,17 +95,23 @@ class Map {
 
         flagCountry.src = `https://restcountries.eu/data/${country.flag}.svg`;
         nameCountry.textContent = country.Country;
-        valueCountry.textContent =country.TotalConfirmed.toLocaleString();
-        titleValueCountry.textContent ='Cases: ';
+        valueCountry.textContent = country.TotalConfirmed.toLocaleString();
+        titleValueCountry.textContent = 'Cases: ';
         populationCountry.textContent = country.population.toLocaleString();
         blockInfoCountry.classList.add('show-popup-block');
         blockInfoCountry.classList.remove('hide-popup-block');
+
+        this.setStyle({
+            fillOpacity: 0.1
+        });
     }
 
-    hideMoreInfo () {
-        const blockInfoCountry = document.getElementById('popupBlock');
+    hideMoreInfo(blockInfoCountry) {
         blockInfoCountry.classList.remove('show-popup-block');
         blockInfoCountry.classList.add('hide-popup-block');
+        this.setStyle({
+            fillOpacity: 0
+        });
     }
 
     redrawMap() {
@@ -74,7 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
     map.renderMap();
 
     setTimeout(() => {
-        console.log(dashboard.allInfo);
-        map.renderCases(dashboard.allInfo);
+        console.log(dashboard);
+        map.renderCircleMarker(dashboard.allInfo);
+        map.renderBorderCountry(dashboard.allInfo);
     }, 1500);
 });
+
