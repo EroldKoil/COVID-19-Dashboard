@@ -58,6 +58,7 @@ class Map {
                 this.initMouseEvent(dataCountries[country], geoCountries.features[key], borderCountry);
             }
         }
+        this.renderCircleMarker(dataCountries);
     }
 
     correctionOfCoords(value) {
@@ -95,8 +96,8 @@ class Map {
 
         flagCountry.src = `https://restcountries.eu/data/${country.flag}.svg`;
         nameCountry.textContent = country.Country;
-        valueCountry.textContent = country.TotalConfirmed.toLocaleString();
         titleValueCountry.textContent = 'Cases: ';
+        valueCountry.textContent = country.TotalConfirmed.toLocaleString();
         populationCountry.textContent = country.population.toLocaleString();
         blockInfoCountry.classList.add('show-popup-block');
         blockInfoCountry.classList.remove('hide-popup-block');
@@ -124,8 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
     map.renderMap();
 
     setTimeout(() => {
-        console.log(dashboard);
-        map.renderCircleMarker(dashboard.allInfo);
         map.renderBorderCountry(dashboard.allInfo);
     }, 1500);
 });
