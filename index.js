@@ -61,8 +61,12 @@ let dashboard = {
             this.allInfo[el.alpha2Code].coords = { lat: el.latlng[0], lon: el.latlng[1] };
           }
         });
+        this.worldInfo.population = Object.keys(this.allInfo).reduce((accumulator, currentValue) => {
+          console.log(this.allInfo[currentValue].population);
+          return accumulator + +this.allInfo[currentValue].population;
+        }, 0);
         save();
-        createSecondTable(this.allInfo, 'Confirmed', 'Total');
+        //createSecondTable(this.allInfo, 'Confirmed', 'Total');
         createFirstTable();
       })
       .catch(error => console.log('error', error));
@@ -271,7 +275,7 @@ function addListeners() {
         }
         Object.keys(dashboard.arguments).forEach(key => {
           if (dashboard.arguments[key] !== oldArguments[key]) {
-            createFirstTable();
+            updateData();
           }
         });
         document.onmousemove = null;
@@ -300,6 +304,12 @@ function addListeners() {
   });
 }
 
+function updateData() {
+  let arraySort = getSortedArray();
+  createFirstTable(arraySort);
+  //  createSecondTable(arraySort /*dashboard.allInfo, 'Confirmed', 'Total'*/ );
+}
+
 
 function selectCountry(tag) {
   if (dashboard.selectedCountry !== 'world') {
@@ -314,9 +324,8 @@ function selectCountry(tag) {
 // period - за какой период рассматривается информация ('New' or 'Total')
 // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
 
-function createSecondTable(array, argument, period, absValue) {
+function createSecondTable(arraySort /*array, argument, period, absValue*/ ) {
   let str = '';
-  let arraySort = [];
 
   for (key in array) {
     let el = array[key];
@@ -360,10 +369,8 @@ function getValue(param, elem) {
   }
 }
 
-function createFirstTable() {
+function createFirstTable(arraySort) {
   let str = '';
-  let arraySort = getSortedArray(dashboard.arguments.sortBy, dashboard.arguments.sortReverse, dashboard.arguments.period);
-
   arraySort.forEach((el) => {
     str += `
 		<div class="fTableLine">
@@ -371,15 +378,17 @@ function createFirstTable() {
 				<div class="fTableLine__country_text">${el.Country}</div>
 				<div class="fTableLine__country_flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
 			</div>
-			<div class="fTableLine__Confirmed">${getValue('Confirmed' , el)}</div>
-			<div class="fTableLine__Recovered">${getValue('Recovered' , el)}</div>
-			<div class="fTableLine__Deaths">${getValue('Deaths' , el)}</div>
+			<div class="fTableLine__Confirmed">${el[dashboard.arguments.period + 'Confirmed']}</div>
+			<div class="fTableLine__Recovered">${el[dashboard.arguments.period + 'Recovered']}</div>
+			<div class="fTableLine__Deaths">${el[dashboard.arguments.period + 'Deaths']}</div>
 		</div>
 		`;
   });
-  document.querySelector('.fTableGlobal .fTableLine__Confirmed').innerText = getValue('Confirmed', dashboard.worldInfo);
-  document.querySelector('.fTableGlobal .fTableLine__Recovered').innerText = getValue('Recovered', dashboard.worldInfo);
-  document.querySelector('.fTableGlobal .fTableLine__Deaths').innerText = getValue('Deaths', dashboard.worldInfo);
+  ['Confirmed', 'Recovered', 'Deaths'].forEach(param => {
+    document.querySelector(`.fTableGlobal .fTableLine__${param}`).innerText =
+      dashboard.arguments.absValue ? dashboard.worldInfo[dashboard.arguments.period + param] :
+      Math.floor(100000 / dashboard.worldInfo.population * dashboard.worldInfo[dashboard.arguments.period + param]);
+  });
 
   document.querySelector('.tabFTable__content').innerHTML = str;
 }
@@ -397,53 +406,58 @@ function searchCountry(str) {
   });
 }
 
-function getSortedArray(sortBy, sortReverse, period) {
+function getSortedArray() {
+  let dashboardCopy = JSON.parse(JSON.stringify(dashboard.allInfo));
   let arraySort = [];
+  let sortBy = dashboard.arguments.sortBy;
+  let period = dashboard.arguments.period;
+  let absValue = dashboard.arguments.absValue;
 
-  for (key in dashboard.allInfo) {
-    let el = dashboard.allInfo[key];
-    if (sortBy !== 'Country') {
-      let number = el[period + sortBy];
+  if (!absValue) {
+    Object.keys(dashboardCopy).forEach(key => {
+      let element = dashboardCopy[key];
+      ['NewConfirmed', 'NewDeaths', 'NewRecovered', 'TotalConfirmed', 'TotalDeaths', 'TotalRecovered'].forEach(param => {
+        element[param] = Math.floor(100000 / element.population * element[param]);
+      });
+    });
+  }
+  for (key in dashboardCopy) {
+    let el = dashboardCopy[key];
 
-      if (arraySort.length === 0) {
-        arraySort.push(el);
-      } else {
-        let flag = false;
-        for (let i = 0; i < arraySort.length; i++) {
-          if (arraySort[i][period + sortBy] >= number && (i === 0 || (arraySort[i - 1][period + sortBy] <= number))) {
-            arraySort.splice(i, 0, el);
-            flag = true;
-            break;
-          }
-        }
-        if (!flag) {
-          arraySort.push(el);
+    //  if (sortBy !== 'Country') {
+    let number = el[period + sortBy];
+
+    if (arraySort.length === 0) {
+      arraySort.push(el);
+    } else {
+      let flag = false;
+      for (let i = 0; i < arraySort.length; i++) {
+        if (arraySort[i][period + sortBy] >= number && (i === 0 || (arraySort[i - 1][period + sortBy] <= number))) {
+          arraySort.splice(i, 0, el);
+          flag = true;
+          break;
         }
       }
-    } else {
-      arraySort.push(el);
+      if (!flag) {
+        arraySort.push(el);
+      }
     }
+    /*  } else {
+        arraySort.push(el);
+      }*/
   }
-  if (!sortReverse) {
-    arraySort = arraySort.reverse()
-  }
-  return arraySort;
+  return arraySort.reverse();
 }
 
-function getInfo() {
-  if (localStorage.getItem('covidLocalDataBase')) {
-    dashboard = JSON.parse(localStorage.getItem('covidLocalDataBase'));
-    createSecondTable(dashboard.allInfo, 'Confirmed', 'Total');
-    createFirstTable()
-  } else {
-    dashboard.addCovidInfo();
-  }
-
-}
 
 function startSession() {
   addListeners();
-  getInfo();
+  if (localStorage.getItem('covidLocalDataBase')) {
+    dashboard = JSON.parse(localStorage.getItem('covidLocalDataBase'));
+    updateData();
+  } else {
+    dashboard.addCovidInfo();
+  }
 }
 
 function save() {
