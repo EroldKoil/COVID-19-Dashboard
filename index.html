@@ -8,50 +8,101 @@
   <link rel="stylesheet" href="style/styleKeyBoard.css">
   <link rel="stylesheet" href="style/style.css">
   <link rel="stylesheet" href="style/styleSearch.css">
+  <link rel="stylesheet" href="style/styleControl.css">
+
 </head>
 
 <body>
   <main>
-    <div class="globalInfoAndTopNumber">
-      <section class="topNumber">
-        <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
-        <div class="sectionConttent">
-          <div class="topNumber__discription">
-            Global Cases
-          </div>
-          <div class="topNumber__value">
-            50 812 345
-          </div>
-        </div>
-      </section>
-
-      <section class="globalInfo">
-        <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
-        <div class="sectionConttent">
-          <div class="globalInfo__header">
-            <div class="searchContainer">
-              <div class="openKeyboardBtn"><img src="assets/images/openKeyboardBtn.png"></div>
-              <div class="searchInputContainer">
-                <input type="text" placeholder="search" class="textarea">
-                <div class="searchVariables"></div>
-              </div>
-              <div class="searchBtn">
-                <div class="searchBtn__inset searchBtn__insetClose">
-                  <div class="searchBtn__inset_part"><img src="assets/images/searchClose.png"></div>
-                  <div class="searchBtn__inset_part"><img src="assets/images/search.png"></div>
-                </div>
+    <section class="globalInfo">
+      <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
+      <div class="sectionConttent">
+        <div class="globalInfo__header">
+          <div class="searchContainer">
+            <div class="openKeyboardBtn"><img src="assets/images/openKeyboardBtn.png"></div>
+            <div class="searchInputContainer">
+              <input type="text" placeholder="search" class="textarea">
+              <div class="searchVariables"></div>
+            </div>
+            <div class="searchBtn">
+              <div class="searchBtn__inset searchBtn__insetClose">
+                <div class="searchBtn__inset_part"><img src="assets/images/searchClose.png"></div>
+                <div class="searchBtn__inset_part"><img src="assets/images/search.png"></div>
               </div>
             </div>
           </div>
-          <div class="globalTable"></div>
         </div>
-      </section>
-    </div>
-    <section class="map">
-      <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
-      <div class="sectionConttent"></div>
+        <div class="globalTable"></div>
+      </div>
     </section>
+    <div class="mapAndControl">
+      <section class="map">
+        <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
+        <div class="sectionConttent"></div>
+      </section>
+      <section class="control">
+        <div class="control__panel">
+          <div class="control__panel_countryAndDate">
+            <div class="controlCountry">World</div>
+            <div class="controlDate">Date</div>
+          </div>
+          <div class="control__panel_population">Population 7000000</div>
+          <div class="control__panel_buttons">
+            <div class="control-argum">
+              <div class="control-argum__view">
+                <div class="argum-container" name="sortBy">
+                  <div>Confirmed</div>
+                  <div>Recovered</div>
+                  <div>Deaths</div>
+                </div>
+                <div class="argum-container__glass"></div>
+              </div>
+              <div class="argum-changer">
+                <div class="argum-changer__button" name="sortBy" argumentsCount="3">
+                  <div></div>
+                </div>
+              </div>
+            </div>
 
+            <div class="control-argum two-argoments">
+              <div class="control-argum__view">
+                <div class="argum-container" name="period">
+                  <div>All time</div>
+                  <div>Last update</div>
+                </div>
+                <div class="argum-container__glass"></div>
+              </div>
+              <div class="argum-changer">
+                <div class="argum-changer__button" name="period" argumentsCount="2">
+                  <div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="control-argum two-argoments">
+              <div class="control-argum__view">
+                <div class="argum-container" name="absValue">
+                  <div>Absolute</div>
+                  <div>Per 100k</div>
+                </div>
+                <div class="argum-container__glass"></div>
+              </div>
+              <div class="argum-changer">
+                <div class="argum-changer__button" name="absValue" argumentsCount="2">
+                  <div></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="control__diagram">
+          диаграмма
+        </div>
+
+      </section>
+
+    </div>
     <div class="grafAndTableFirst">
       <section class="tableFirst">
         <div class="fullScreenBtn">
