@@ -1,3 +1,7 @@
+html {
+  overflow: hidden;
+}
+
 body {
   background-color: #2b2b2b;
   width: 100vw;
@@ -107,6 +111,7 @@ section.fullScreen {
 .globalInfo {
   height: 100%;
   width: 20%;
+  background: linear-gradient(180deg, #fff 31px, #3e3d3d 30px);
 }
 
 .globalInfo__header {
@@ -122,6 +127,7 @@ section.fullScreen {
 .globalTable {
   height: calc(100% - 95px);
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 .globalTable::-webkit-scrollbar,
@@ -193,7 +199,8 @@ body::-webkit-scrollbar,
   background-color: #212121;
 }
 
-.tabFTable__content .fTableLine:hover {
+.tabFTable__content .fTableLine:hover,
+.fTableLine-selected {
   background-color: #212121;
 }
 
@@ -236,11 +243,14 @@ body::-webkit-scrollbar,
 }
 
 .tableFirst {
-  height: 59%;
+  height: 57%;
+  padding-top: 30px;
+  background: linear-gradient(180deg, #fff 31px, #3e3d3d 30px);
+  order: 0;
 }
 
 .tableFirst .sectionConttent {
-  /* display: flex; */
+  height: 100%;
 }
 
 .graf .sectionConttent {
@@ -260,16 +270,18 @@ body::-webkit-scrollbar,
   height: 39%;
 }
 
+
+/*
 .tableFirstHeader {
   height: 20%;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
   border-bottom: solid 2px #5656567d;
   background-color: #6969695c;
-}
+}*/
 
 .tabFTable {
-  height: 80%;
+  height: 100%;
 }
 
 .tabFTable__header {
@@ -288,6 +300,7 @@ body::-webkit-scrollbar,
 .headerTable {
   background-color: #1715155c;
   border-bottom: solid 2px #000000;
+  padding-right: 0px;
 }
 
 .tabFTable__header_text {
@@ -354,35 +367,32 @@ body::-webkit-scrollbar,
   width: 100%;
 }
 
-.fTableLine__Recovered {
+.text-Recovered {
   color: #a7d6ff;
 }
 
-.fTableLine__Confirmed {
+.text-Confirmed {
   color: #5fd46dc7;
 }
 
-.fTableLine__Deaths {
+.text-Deaths {
   color: #ff6565;
 }
 
-.headerTable .fTableLine__Recovered:hover,
-.headerTable .fTableLine__Confirmed:hover,
-.headerTable .fTableLine__Deaths:hover,
-.headerTable .fTableLine__Country:hover {
+.headerTable>*:hover {
   background: #6d6d6d3d;
 }
 
-.headerTable .fTableLine__Recovered,
-.headerTable .fTableLine__Confirmed,
-.headerTable .fTableLine__Deaths,
-.headerTable .fTableLine__Country {
+.headerTable>* {
   justify-content: space-around;
 }
 
-.fTableLine__Recovered,
-.fTableLine__Confirmed,
-.fTableLine__Deaths {
+.tabFTable__header .text-Deaths {
+  padding-right: 4px;
+}
+
+.headerTable>*:not(.fTableLine__Country),
+.fTableLine>*:not(.fTableLine__Country) {
   width: 22.5%;
   display: flex;
   align-items: center;
@@ -404,6 +414,7 @@ body::-webkit-scrollbar,
 .tabFTable__content {
   overflow-y: scroll;
   height: calc(100% - 96px);
+  scroll-behavior: smooth;
 }
 
 @media (max-width: 1023px) {
