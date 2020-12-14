@@ -5,7 +5,8 @@ let dashboard = {
   // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
   arguments: {
     sortBy: 'Confirmed',
-    sortReverse: false,
+    sortReverseFirst: false,
+    sortReverseSecond: false,
     period: 'Total',
     absValue: true
   },
@@ -25,6 +26,7 @@ let dashboard = {
         let object = JSON.parse(result);
         object.Countries.forEach((el) => {
           this.allInfo[el.CountryCode] = {
+            //  Slug: el.Slug,
             Country: el.Country,
             CountryCode: el.CountryCode,
             NewConfirmed: el.NewConfirmed,
@@ -62,12 +64,10 @@ let dashboard = {
           }
         });
         this.worldInfo.population = Object.keys(this.allInfo).reduce((accumulator, currentValue) => {
-          console.log(this.allInfo[currentValue].population);
           return accumulator + +this.allInfo[currentValue].population;
         }, 0);
         save();
-        //createSecondTable(this.allInfo, 'Confirmed', 'Total');
-        createFirstTable();
+        updateData(true);
       })
       .catch(error => console.log('error', error));
   },
@@ -171,27 +171,42 @@ function addListeners() {
     }*/
   });
 
-  // Клик по таблице стран
+  // Клик по таблице 2
   document.querySelector('.globalTable').addEventListener('click', (event) => {
     let target = event.target;
     if (target.classList[0] !== 'globalTable') {
       while (target.classList[0] != 'globalTable__line') {
         target = target.parentElement;
       }
-      selectCountry(target);
+      selectCountry(target.getAttribute('name'), 2);
+    }
+  });
+
+  // Клик по таблице 1
+  document.querySelector('.tabFTable__content').addEventListener('click', (event) => {
+    let target = event.target;
+    if (target.classList[0] !== 'tabFTable__content') {
+      while (target.classList[0] != 'fTableLine') {
+        target = target.parentElement;
+      }
+      selectCountry(target.getAttribute('name'), 1);
     }
   });
 
   // Изменение сортировки в первой таблице
   document.querySelector('.headerTable').addEventListener('click', (event) => {
     let target = event.target;
+    let oldSortBy = dashboard.arguments.sortBy;
+    let oldReverse = dashboard.arguments.sortReverseFirst;
     let sortBy = '';
 
     let changeView = () => {
       dashboard.arguments.sortBy = sortBy;
-      document.querySelector('.tabFTable__header_arrows div:not(.notActiveArrow)').classList.toggle('notActiveArrow');
-      document.querySelector(`.fTableLine__${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverse?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
-      createFirstTable();
+      if (oldSortBy !== dashboard.arguments.sortBy) {
+        createFirstTable(dashboard.arguments.sortReverseFirst ? getSortedArray().reverse() : getSortedArray());
+        changeSortBy();
+      }
+      changeTableReverse('tabFTable__content', oldReverse !== dashboard.arguments.sortReverseFirst);
     }
 
     if (target.tagName === 'IMG' || target.classList[0] === 'tabFTable__header_arrows' || target.className === 'tabFTable__header_text') {
@@ -199,16 +214,16 @@ function addListeners() {
     }
     if (target.classList[0] === 'sortArrowTop' || target.classList[0] === 'sortArrowBottom') {
       if (target.classList.contains('notActiveArrow')) {
-        sortBy = target.parentElement.parentElement.className.substr(12);
-        dashboard.arguments.sortReverse = target.classList.contains('sortArrowTop');
+        sortBy = target.parentElement.parentElement.className.substr(5);
+        dashboard.arguments.sortReverseFirst = target.classList.contains('sortArrowTop');
         changeView();
       }
     } else {
-      sortBy = target.className.substr(12);
+      sortBy = target.className.substr(5);
       if (sortBy !== dashboard.arguments.sortBy) {
-        dashboard.arguments.sortReverse = true;
+        dashboard.arguments.sortReverseFirst = true;
       }
-      dashboard.arguments.sortReverse = !dashboard.arguments.sortReverse;
+      dashboard.arguments.sortReverseFirst = !dashboard.arguments.sortReverseFirst;
       changeView();
     }
   });
@@ -251,17 +266,13 @@ function addListeners() {
 
         if (el.getAttribute('argumentsCount') === '3') {
           if (newRight < percentMax / 4) {
-            newRight = percentMin;
             dashboard.arguments.sortBy = 'Confirmed';
           } else if (newRight >= percentMax / 4 && newRight < percentMax / 4 * 3) {
-            newRight = percentMax / 2;
             dashboard.arguments.sortBy = 'Recovered';
           } else {
-            newRight = percentMax;
             dashboard.arguments.sortBy = 'Deaths';
           }
-          el.style.right = `${newRight}%`;
-          argumentDom.style.left = `-${(newRight - 1) / 7 * 18}%`;
+          changeSortBy();
         } else {
           if (newRight < percentMax / 2) {
             newRight = percentMin;
@@ -304,56 +315,40 @@ function addListeners() {
   });
 }
 
-function updateData() {
+function updateData(firstTime) {
   let arraySort = getSortedArray();
+  if (firstTime) {
+    let updateDate = new Date(dashboard.lastApdate);
+    document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
+  }
   createFirstTable(arraySort);
-  //  createSecondTable(arraySort /*dashboard.allInfo, 'Confirmed', 'Total'*/ );
+  createSecondTable(arraySort);
 }
 
 
-function selectCountry(tag) {
+function selectCountry(CountryCode, tableCount) {
   if (dashboard.selectedCountry !== 'world') {
     document.querySelector('.globalTable__line_selected').classList.remove('globalTable__line_selected');
+    document.querySelector('.fTableLine-selected').classList.remove('fTableLine-selected');
   }
-  tag.classList.add('globalTable__line_selected');
-  dashboard.selectedCountry = tag.querySelector('.globalTable__line__name').innerText;
-  document.querySelector('.topNumber__discription').innerText = dashboard.selectedCountry;
+
+  document.querySelector(`.globalTable__line[name=${CountryCode}]`).classList.add('globalTable__line_selected');
+  document.querySelector(`.fTableLine[name=${CountryCode}]`).classList.add('fTableLine-selected');
+  dashboard.selectedCountry = CountryCode;
+  document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
+
+  let selectedLine = document.querySelector(tableCount === 1 ? '.globalTable__line_selected' : '.fTableLine-selected');
+  let table = document.querySelector(tableCount === 1 ? '.globalTable' : '.tabFTable__content');
+  table.scrollTop = selectedLine.offsetTop - 110;
 }
 
-// argument - критерий для отбора данных: ('Confirmed' or 'Deaths' or 'Recovered')
-// period - за какой период рассматривается информация ('New' or 'Total')
-// absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
-
-function createSecondTable(arraySort /*array, argument, period, absValue*/ ) {
+function createSecondTable(arraySort) {
   let str = '';
 
-  for (key in array) {
-    let el = array[key];
-    let number = el[period + argument];
-    let obj = { name: dashboard.allInfo[key].Country, num: number, flag: el.flag, slug: key };
-
-    if (arraySort.length === 0) {
-      arraySort.push(obj);
-    } else {
-      let flag = false;
-      for (let i = 0; i < arraySort.length; i++) {
-        if (arraySort[i].num >= obj.num && (i === 0 || (arraySort[i - 1].num <= obj.num))) {
-          arraySort.splice(i, 0, obj);
-          flag = true;
-          break;
-        }
-      }
-      if (!flag) {
-        arraySort.push(obj);
-      }
-    }
-  }
-
-
-  arraySort.reverse().forEach((el) => {
-    str += `<div class="globalTable__line" name="${el.slug}">
-		<div class="globalTable__line__number">${el.num}</div>
-		<div class="globalTable__line__name">${el.name}</div>
+  arraySort.forEach((el) => {
+    str += `<div class="globalTable__line" name="${el.CountryCode}">
+		<div class="globalTable__line__number">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
+		<div class="globalTable__line__name">${el.Country}</div>
 		<div class="globalTable__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
 		</div>
 		`;
@@ -361,31 +356,23 @@ function createSecondTable(arraySort /*array, argument, period, absValue*/ ) {
   document.querySelector('.globalTable').innerHTML = str;
 }
 
-function getValue(param, elem) {
-  if (dashboard.arguments.absValue) {
-    return elem[dashboard.arguments.period + param];
-  } else {
-    return Math.floor(100000 / elem.population * +elem[dashboard.arguments.period + param]);
-  }
-}
-
 function createFirstTable(arraySort) {
   let str = '';
   arraySort.forEach((el) => {
     str += `
-		<div class="fTableLine">
+		<div class="fTableLine" name="${el.CountryCode}">
 			<div class="fTableLine__Country">
 				<div class="fTableLine__country_text">${el.Country}</div>
 				<div class="fTableLine__country_flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
 			</div>
-			<div class="fTableLine__Confirmed">${el[dashboard.arguments.period + 'Confirmed']}</div>
-			<div class="fTableLine__Recovered">${el[dashboard.arguments.period + 'Recovered']}</div>
-			<div class="fTableLine__Deaths">${el[dashboard.arguments.period + 'Deaths']}</div>
+			<div class="text-Confirmed">${el[dashboard.arguments.period + 'Confirmed']}</div>
+			<div class="text-Recovered">${el[dashboard.arguments.period + 'Recovered']}</div>
+			<div class="text-Deaths">${el[dashboard.arguments.period + 'Deaths']}</div>
 		</div>
 		`;
   });
   ['Confirmed', 'Recovered', 'Deaths'].forEach(param => {
-    document.querySelector(`.fTableGlobal .fTableLine__${param}`).innerText =
+    document.querySelector(`.fTableGlobal .text-${param}`).innerText =
       dashboard.arguments.absValue ? dashboard.worldInfo[dashboard.arguments.period + param] :
       Math.floor(100000 / dashboard.worldInfo.population * dashboard.worldInfo[dashboard.arguments.period + param]);
   });
@@ -404,6 +391,30 @@ function searchCountry(str) {
       el.classList.add('globalTable__line-hidden');
     }
   });
+}
+
+function changeTableReverse(tableClass, needReverse) {
+  if (tableClass === 'tabFTable__content') {
+    document.querySelector('.tabFTable__header_arrows div:not(.notActiveArrow)').classList.toggle('notActiveArrow');
+    document.querySelector(`.text-${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverseFirst?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+  } else {
+    // изменение стрелок для таблицы 1
+  }
+  if (needReverse) {
+    let table = document.querySelector('.' + tableClass);
+    let array = [...table.children].reverse();
+    table.innerHTML = ''
+    array.forEach(el => table.append(el));
+  }
+}
+
+function changeSortBy() {
+  let percentMax = 78;
+  let percentMin = 1;
+  let sortBy = dashboard.arguments.sortBy;
+  let buttonRight = sortBy === 'Confirmed' ? percentMin : sortBy === 'Recovered' ? percentMax / 2 : percentMax;
+  document.querySelector('.argum-changer__button[name=sortBy]').style.right = `${buttonRight}%`;
+  document.querySelector(`.argum-container[name=sortBy]`).style.left = `-${(buttonRight - 1) / 7 * 18}%`;
 }
 
 function getSortedArray() {
@@ -449,12 +460,11 @@ function getSortedArray() {
   return arraySort.reverse();
 }
 
-
 function startSession() {
   addListeners();
   if (localStorage.getItem('covidLocalDataBase')) {
     dashboard = JSON.parse(localStorage.getItem('covidLocalDataBase'));
-    updateData();
+    updateData(true);
   } else {
     dashboard.addCovidInfo();
   }
