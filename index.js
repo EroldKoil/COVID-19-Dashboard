@@ -10,6 +10,8 @@ let dashboard = {
     period: 'Total',
     absValue: true
   },
+  mapCovid:new MapCovid(),
+
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -133,6 +135,7 @@ function addListeners() {
         target = target.parentElement;
       }
       target.classList.toggle('fullScreen');
+      dashboard.mapCovid.fullScreenMap();
       // изменение картинки для кнопки
       target.querySelector('img').src = `assets/images/${target.classList.contains('fullScreen')?'miniScreen':'fullScreen'}.png`
     });
@@ -320,9 +323,11 @@ function updateData(firstTime) {
   if (firstTime) {
     let updateDate = new Date(dashboard.lastApdate);
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
+    dashboard.mapCovid.renderMap();
   }
   createFirstTable(arraySort);
   createSecondTable(arraySort);
+  dashboard.mapCovid.redrawMap(arraySort);
 }
 
 
@@ -463,7 +468,10 @@ function getSortedArray() {
 function startSession() {
   addListeners();
   if (localStorage.getItem('covidLocalDataBase')) {
-    dashboard = JSON.parse(localStorage.getItem('covidLocalDataBase'));
+    let dash = JSON.parse(localStorage.getItem('covidLocalDataBase'));
+    dashboard.allInfo = dash.allInfo;
+    dashboard.worldInfo = dash.worldInfo;
+    dashboard.lastApdate = dash.lastApdate;
     updateData(true);
   } else {
     dashboard.addCovidInfo();
@@ -471,7 +479,8 @@ function startSession() {
 }
 
 function save() {
-  localStorage.setItem('covidLocalDataBase', JSON.stringify(dashboard));
+  let dash = { allInfo: dashboard.allInfo, worldInfo: dashboard.worldInfo, lastApdate: dashboard.lastApdate }
+  localStorage.setItem('covidLocalDataBase', JSON.stringify(dash));
 }
 
 startSession();
