@@ -8,6 +8,7 @@ class MapCovid {
             zoom: 2,
             maxZoom: 9,
             maxBounds: L.latLngBounds(this.southWest, this.northEast),
+            attributionControl: false,
         });
         this.markerLayer = L.featureGroup();
     }
@@ -15,7 +16,6 @@ class MapCovid {
     renderMap() {
         const tileLayer = new L.TileLayer('https://tile.jawg.io/6a531b2b-270b-4f38-af60-86177cec21ad/{z}/{x}/{y}.png?lang=en&access-token=hjwgVWeFpBZKCpiJuubyxLQTlfaKby0nFconlrJRUxRilidPFenqyUvzELqTeEjR', {
             minZoom: 2,
-            attribution: '<a href=\\"https://www.jawg.io\\" target=\\"_blank\\">&copy; Jawg</a> - <a href=\\"https://www.openstreetmap.org\\" target=\\"_blank\\">&copy; OpenStreetMap</a>&nbsp;contributors',
             updateInterval: 10,
         });
         this.map.addLayer(tileLayer);
@@ -25,7 +25,7 @@ class MapCovid {
         const selectSort = `${dashboard.arguments.period}${dashboard.arguments.sortBy}`;
         const selectColor = this.getColorMarker(dashboard.arguments.sortBy);
         for (let key in data) {
-            let percentOfCases = (data[key][selectSort]/ dashboard.worldInfo[selectSort]) * 100;
+            let percentOfCases = (data[key][selectSort] / dashboard.worldInfo[selectSort]) * 100;
             const casesCircle = L.circleMarker([data[key].coords.lat, data[key].coords.lon], {
                 radius: percentOfCases < 1 ? 4 : percentOfCases,
                 fill: true,
@@ -66,13 +66,13 @@ class MapCovid {
     }
 
     getColorMarker(typeData) {
-        if(typeData.includes('Confirmed')) {
+        if (typeData.includes('Confirmed')) {
             return '#33953D';
         }
-        if(typeData.includes('Recovered')) {
+        if (typeData.includes('Recovered')) {
             return '#598bc1';
         }
-        if(typeData.includes('Deaths')) {
+        if (typeData.includes('Deaths')) {
             return '#cd1b1b';
         }
     }
@@ -89,32 +89,33 @@ class MapCovid {
     initMouseEvent(country, countryZone, element) {
         const blockInfoCountry = document.getElementById('popupBlock');
 
-        blockInfoCountry.onmouseover = () => {
-            blockInfoCountry.classList.add('show-popup-block');
-            blockInfoCountry.classList.remove('hide-popup-block');
-        }
-        blockInfoCountry.onmouseout = () => {
-            blockInfoCountry.classList.remove('show-popup-block');
-            blockInfoCountry.classList.add('hide-popup-block');
-        }
-
         if (countryZone !== undefined) {
             if (country.CountryCode.toLowerCase() === countryZone.properties.iso_a2.toLowerCase()) {
-                element.on('mouseover', this.showMoreInfo.bind(element, country, blockInfoCountry, false));
-                element.on('mouseout', this.hideMoreInfo.bind(element, blockInfoCountry, false));
+                element.on('mouseover', (event) => {
+                    this.showMoreInfo(event, element, country, blockInfoCountry, false)
+                });
+                element.on('mouseout', (event) => {
+                    event, this.hideMoreInfo(event, element, blockInfoCountry, false)
+                });
             }
         } else {
-            element.on('mouseover', this.showMoreInfo.bind(element, country, blockInfoCountry, true));
-            element.on('mouseout', this.hideMoreInfo.bind(element, blockInfoCountry, true));
+            element.on('mouseover', (event) => {
+                event, this.showMoreInfo(event, element, country, blockInfoCountry, true)
+            });
+            element.on('mouseout', (event) => {
+                event, this.hideMoreInfo(event, element, blockInfoCountry, true)
+            });
         }
     }
 
-    showMoreInfo(country, blockInfoCountry, markerCircle) {
+    showMoreInfo(event, element, country, blockInfoCountry, markerCircle) {
         const flagCountry = document.querySelector('.popup-img');
         const nameCountry = document.querySelector('.popup-name');
         const valueCountry = document.getElementById('popup-value');
         const titleValueCountry = document.querySelector('.popup-value-title');
         const populationCountry = document.querySelector('.popup-population');
+
+        this.popupPositionCorrect(event,blockInfoCountry);
 
         flagCountry.src = `https://restcountries.eu/data/${country.flag}.svg`;
         nameCountry.textContent = country.Country;
@@ -126,19 +127,51 @@ class MapCovid {
         blockInfoCountry.classList.add('show-popup-block');
         blockInfoCountry.classList.remove('hide-popup-block');
         if (markerCircle === false) {
-            this.setStyle({
+            element.setStyle({
                 fillOpacity: 0.1
             });
         }
     }
 
-    hideMoreInfo(blockInfoCountry, markerCircle) {
+    hideMoreInfo(event, element, blockInfoCountry, markerCircle) {
         blockInfoCountry.classList.remove('show-popup-block');
         blockInfoCountry.classList.add('hide-popup-block');
         if (markerCircle === false) {
-            this.setStyle({
+            element.setStyle({
                 fillOpacity: 0
             });
+        }
+    }
+
+    popupPositionCorrect(event, blockInfoCountry) {
+        let clientHeight;
+        let clientWidth;
+        const posX = event.containerPoint.x;
+        const posY = event.containerPoint.y;
+
+        if(event.target._map._size) {
+            clientHeight = event.target._map._size.x;
+            clientWidth = event.target._map._size.y;
+        }else {
+            return;
+        }
+
+        if (posY < clientHeight / 2 && posX < clientWidth / 2) {
+            blockInfoCountry.classList.add('position-revers');
+        } else {
+            if (posY < clientHeight / 2 && posX > clientWidth / 2) {
+                blockInfoCountry.classList.remove('position-revers');
+            } else {
+                if(posY > clientHeight / 2) {
+                    blockInfoCountry.classList.remove('position-revers');
+                }
+            }
+        }
+    }
+
+    followSelectCountry() {
+        if(dashboard.selectedCountry!=='world') {
+            this.map.flyTo(dashboard.allInfo[dashboard.selectedCountry].coords, 6);
         }
     }
 
@@ -148,7 +181,7 @@ class MapCovid {
     }
 
     fullScreenMap() {
-        this.map.invalidateSize(false);
+        this.map.invalidateSize(true);
     }
 
     redrawMap(data) {

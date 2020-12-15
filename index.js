@@ -389,6 +389,7 @@ function selectCountry(CountryCode, tableCount) {
   let table = document.querySelector(tableCount === 1 ? '.tableSecond__content' : '.tabFTable__content');
   table.scrollTop = selectedLine.offsetTop - 110;
   document.querySelector('.textarea').value = '';
+  dashboard.mapCovid.followSelectCountry();
 }
 
 function createSecondTable(arraySort) {
