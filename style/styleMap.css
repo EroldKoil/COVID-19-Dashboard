@@ -18,6 +18,10 @@
   font-weight: 600;
 }
 
+.leaflet-container {
+    background-color: #404081;
+}
+
 .leaflet-container .leaflet-top {
   top: 50%;
   transform: translateY(-50%);

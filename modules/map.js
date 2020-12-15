@@ -11,6 +11,7 @@ class MapCovid {
             attributionControl: false,
         });
         this.markerLayer = L.featureGroup();
+        this.legend = L.control({position: 'bottomright'});
     }
 
     renderMap() {
@@ -19,6 +20,19 @@ class MapCovid {
             updateInterval: 10,
         });
         this.map.addLayer(tileLayer);
+        this.legend.onAdd = function (map) {
+            const legendContent = L.DomUtil.create('div', 'info legend');
+            const grades = ['Confirmed', 'Deaths', 'Recovered'];
+
+            for (let i = 0; i < grades.length; i++) {
+                legendContent.innerHTML +=
+                    '<i style="background:' + 'black' + '"></i> ' +
+                    grades[i];
+            }
+
+            return legendContent;
+        }
+        this.legend.addTo(this.map);
     }
 
     renderCircleMarker(data) {
@@ -97,6 +111,9 @@ class MapCovid {
                 element.on('mouseout', (event) => {
                     event, this.hideMoreInfo(event, element, blockInfoCountry, false)
                 });
+                element.on('click', (event) => {
+                        selectCountry(countryZone.properties.iso_a2,3);
+                });
             }
         } else {
             element.on('mouseover', (event) => {
@@ -104,6 +121,9 @@ class MapCovid {
             });
             element.on('mouseout', (event) => {
                 event, this.hideMoreInfo(event, element, blockInfoCountry, true)
+            });
+            element.on('click', (event) => {
+                selectCountry(country.CountryCode,3);
             });
         }
     }

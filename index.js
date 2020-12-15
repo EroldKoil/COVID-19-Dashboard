@@ -356,6 +356,8 @@ function selectLineAndArient(tableCount) {
       selectedLine = document.querySelector('.tableSecond__content .tableLine-selected');
       table = document.querySelector('.tableSecond__content');
       table.scrollTop = selectedLine.offsetTop - 130;
+    }else {
+      dashboard.mapCovid.followSelectCountry();
     }
   }
 }
