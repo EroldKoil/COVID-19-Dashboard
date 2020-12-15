@@ -108,29 +108,46 @@ section.fullScreen {
   font-family: fantasy;
 }
 
-.globalInfo {
+.tableSecond {
   height: 100%;
   width: 20%;
   background: linear-gradient(180deg, #fff 31px, #3e3d3d 30px);
+  padding-top: 80px;
+  overflow: hidden;
 }
 
-.globalInfo__header {
-  height: 77px;
+.tableSecond__header:hover {
+  background-color: #6d6d6d3d;
+}
+
+.tableSecond__header {
+  height: 46px;
   border-bottom: solid 2px #585858;
   position: relative;
   overflow: hidden;
   display: flex;
+  justify-content: space-around;
+  border-top: solid 2px #000;
+  user-select: none;
+  cursor: pointer;
+  background-color: #1715155c;
 }
 
-.globalInfo__top {}
+.tableSecond__header_country {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-.globalTable {
+.tableSecond__top {}
+
+.tableSecond__content {
   height: calc(100% - 95px);
   overflow-y: scroll;
   scroll-behavior: smooth;
 }
 
-.globalTable::-webkit-scrollbar,
+.tableSecond::-webkit-scrollbar,
 main::-webkit-scrollbar,
 body::-webkit-scrollbar,
 .tabFTable__content::-webkit-scrollbar {}
@@ -160,7 +177,7 @@ body::-webkit-scrollbar,
   background-color: #666;
 }
 
-.globalTable__line {
+.tableSecond__line {
   height: 46px;
   display: flex;
   justify-content: space-between;
@@ -171,7 +188,7 @@ body::-webkit-scrollbar,
   transition-duration: 0.5s;
 }
 
-.globalTable__line-hidden {
+.country-hidden {
   display: none;
 }
 
@@ -193,8 +210,8 @@ body::-webkit-scrollbar,
   }
 }
 
-.globalTable__line:hover,
-.globalTable__line_selected {
+.tableSecond__line:hover,
+.tableSecond__line_selected {
   background: #6d6d6d3d;
   background-color: #212121;
 }
@@ -204,14 +221,14 @@ body::-webkit-scrollbar,
   background-color: #212121;
 }
 
-.globalTable__line__number {
-  font-size: 26px;
+.tableSecond__line__number {
+  font-size: 20px;
   text-shadow: 0 0 3px black, 0 0 3px black;
   color: #d40000;
   font-family: fantasy;
 }
 
-.globalTable__line__name {
+.tableSecond__line__name {
   font-size: 18px;
   text-shadow: 0 0 1px black;
   color: #ababab;
@@ -219,9 +236,9 @@ body::-webkit-scrollbar,
   width: 50%;
 }
 
-.globalTable__line__flag {}
+.tableSecond__line__flag {}
 
-.globalTable__line__flag img {
+.tableSecond__line__flag img {
   width: 27px;
 }
 
@@ -309,9 +326,9 @@ body::-webkit-scrollbar,
   align-items: center;
 }
 
-.tabFTable__header_arrows {}
+.table__header_arrows {}
 
-.tabFTable__header_arrows .notActiveArrow {
+.table__header_arrows .notActiveArrow {
   filter: grayscale(1);
 }
 
