@@ -68,9 +68,25 @@
     text-shadow: 0 0 2px black;
 }
 
-.popup-value {
+.popup-value-confirmed {
     font-size: 16px;
     color: #5fd46dc7;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-shadow: 0 0 2px black;
+}
+
+.popup-value-deaths {
+    font-size: 16px;
+    color: #ff6565;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-shadow: 0 0 2px black;
+}
+
+.popup-value-recovered {
+    font-size: 16px;
+    color: #a7d6ff;
     font-weight: 600;
     margin-bottom: 5px;
     text-shadow: 0 0 2px black;
