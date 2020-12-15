@@ -1,4 +1,4 @@
-class Map {
+class MapCovid {
 
     constructor() {
         this.southWest = L.latLng(-80.98155760646617, -185);
@@ -9,6 +9,7 @@ class Map {
             maxZoom: 9,
             maxBounds: L.latLngBounds(this.southWest, this.northEast),
         });
+        this.markerLayer = L.featureGroup();
     }
 
     renderMap() {
@@ -21,19 +22,22 @@ class Map {
     }
 
     renderCircleMarker(data) {
+        const selectSort = `${dashboard.arguments.period}${dashboard.arguments.sortBy}`;
+        const selectColor = this.getColorMarker(dashboard.arguments.sortBy);
         for (let key in data) {
-            let percentOfCases = (data[key].TotalConfirmed / dashboard.worldInfo.TotalConfirmed) * 100;
+            let percentOfCases = (data[key][selectSort]/ dashboard.worldInfo[selectSort]) * 100;
             const casesCircle = L.circleMarker([data[key].coords.lat, data[key].coords.lon], {
                 radius: percentOfCases < 1 ? 4 : percentOfCases,
                 fill: true,
-                fillColor: '#F73F3F',
+                fillColor: selectColor,
                 fillOpacity: 0.7,
-                color: '#F73F3F',
+                color: selectColor,
                 opacity: 1,
                 width: 5,
-            });
-            this.map.addControl(casesCircle);
+            }).addTo(this.markerLayer);
+            this.initMouseEvent(data[key], undefined, casesCircle);
         }
+        this.map.addControl(this.markerLayer);
     }
 
 
@@ -61,6 +65,18 @@ class Map {
         this.renderCircleMarker(dataCountries);
     }
 
+    getColorMarker(typeData) {
+        if(typeData.includes('Confirmed')) {
+            return '#33953D';
+        }
+        if(typeData.includes('Recovered')) {
+            return '#598bc1';
+        }
+        if(typeData.includes('Deaths')) {
+            return '#cd1b1b';
+        }
+    }
+
     correctionOfCoords(value) {
         let depthArray = value => {
             return Array.isArray(value) ?
@@ -73,59 +89,71 @@ class Map {
     initMouseEvent(country, countryZone, element) {
         const blockInfoCountry = document.getElementById('popupBlock');
 
-        blockInfoCountry.onmouseover = ()=>{
+        blockInfoCountry.onmouseover = () => {
             blockInfoCountry.classList.add('show-popup-block');
             blockInfoCountry.classList.remove('hide-popup-block');
         }
-        blockInfoCountry.onmouseout = ()=>{
+        blockInfoCountry.onmouseout = () => {
             blockInfoCountry.classList.remove('show-popup-block');
             blockInfoCountry.classList.add('hide-popup-block');
         }
-        if (country.CountryCode.toLowerCase() === countryZone.properties.iso_a2.toLowerCase()) {
-            element.on('mouseover', this.showMoreInfo.bind(element, country, blockInfoCountry));
-            element.on('mouseout', this.hideMoreInfo.bind(element,blockInfoCountry));
+
+        if (countryZone !== undefined) {
+            if (country.CountryCode.toLowerCase() === countryZone.properties.iso_a2.toLowerCase()) {
+                element.on('mouseover', this.showMoreInfo.bind(element, country, blockInfoCountry, false));
+                element.on('mouseout', this.hideMoreInfo.bind(element, blockInfoCountry, false));
+            }
+        } else {
+            element.on('mouseover', this.showMoreInfo.bind(element, country, blockInfoCountry, true));
+            element.on('mouseout', this.hideMoreInfo.bind(element, blockInfoCountry, true));
         }
     }
 
-    showMoreInfo(country, blockInfoCountry) {
+    showMoreInfo(country, blockInfoCountry, markerCircle) {
         const flagCountry = document.querySelector('.popup-img');
         const nameCountry = document.querySelector('.popup-name');
-        const valueCountry = document.querySelector('.popup-value');
+        const valueCountry = document.getElementById('popup-value');
         const titleValueCountry = document.querySelector('.popup-value-title');
         const populationCountry = document.querySelector('.popup-population');
 
         flagCountry.src = `https://restcountries.eu/data/${country.flag}.svg`;
         nameCountry.textContent = country.Country;
-        titleValueCountry.textContent = 'Cases: ';
-        valueCountry.textContent = country.TotalConfirmed.toLocaleString();
+        titleValueCountry.textContent = `${dashboard.arguments.sortBy}: `;
+        valueCountry.className = '';
+        valueCountry.classList.add(`popup-value-${dashboard.arguments.sortBy.toLowerCase()}`)
+        valueCountry.textContent = country[`${dashboard.arguments.period}${dashboard.arguments.sortBy}`].toLocaleString();
         populationCountry.textContent = country.population.toLocaleString();
         blockInfoCountry.classList.add('show-popup-block');
         blockInfoCountry.classList.remove('hide-popup-block');
-
-        this.setStyle({
-            fillOpacity: 0.1
-        });
+        if (markerCircle === false) {
+            this.setStyle({
+                fillOpacity: 0.1
+            });
+        }
     }
 
-    hideMoreInfo(blockInfoCountry) {
+    hideMoreInfo(blockInfoCountry, markerCircle) {
         blockInfoCountry.classList.remove('show-popup-block');
         blockInfoCountry.classList.add('hide-popup-block');
-        this.setStyle({
-            fillOpacity: 0
-        });
+        if (markerCircle === false) {
+            this.setStyle({
+                fillOpacity: 0
+            });
+        }
     }
 
-    redrawMap() {
+    clearMarker() {
+        this.markerLayer.clearLayers();
+        this.map.removeControl(this.markerLayer);
+    }
+
+    fullScreenMap() {
+        this.map.invalidateSize(false);
+    }
+
+    redrawMap(data) {
+        this.clearMarker();
+        this.renderBorderCountry(data);
         this.map.invalidateSize(false);
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const map = new Map();
-    map.renderMap();
-
-    setTimeout(() => {
-        map.renderBorderCountry(dashboard.allInfo);
-    }, 1500);
-});
-

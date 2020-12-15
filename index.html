@@ -15,37 +15,43 @@
 
 <body>
   <main>
-    <section class="globalInfo">
+    <section class="tableSecond">
       <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
       <div class="sectionConttent">
-        <div class="globalInfo__header">
-          <div class="searchContainer">
-            <div class="openKeyboardBtn"><img src="assets/images/openKeyboardBtn.png"></div>
-            <div class="searchInputContainer">
-              <input type="text" placeholder="search" class="textarea">
-              <div class="searchVariables"></div>
-            </div>
-            <div class="searchBtn">
-              <div class="searchBtn__inset searchBtn__insetClose">
-                <div class="searchBtn__inset_part"><img src="assets/images/searchClose.png"></div>
-                <div class="searchBtn__inset_part"><img src="assets/images/search.png"></div>
-              </div>
+        <div class="searchContainer">
+          <div class="openKeyboardBtn"><img src="assets/images/openKeyboardBtn.png"></div>
+          <div class="searchInputContainer">
+            <input type="text" placeholder="search" class="textarea">
+            <div class="searchVariables"></div>
+          </div>
+          <div class="searchBtn">
+            <div class="searchBtn__inset searchBtn__insetClose">
+              <div class="searchBtn__inset_part"><img src="assets/images/searchClose.png"></div>
+              <div class="searchBtn__inset_part"><img src="assets/images/search.png"></div>
             </div>
           </div>
         </div>
-        <div class="globalTable"></div>
+        <div class="tableSecond__header">
+
+          <div class="tableSecond__header_country text-Confirmed">Confirmed</div>
+          <div class="table__header_arrows">
+            <div class="sortArrowTop sortArrowConfirmed notActiveArrow"><img src="assets/images/arrow.png"></div>
+            <div class="sortArrowBottom sortArrowConfirmed "><img src="assets/images/arrow.png"></div>
+          </div>
+        </div>
+        <div class="tableSecond__content"></div>
       </div>
     </section>
     <div class="mapAndControl">
       <section class="map">
         <div class="fullScreenBtn"><img src="assets/images/fullScreen.png"></div>
-          <div id="map" class="sectionConttent">
-            <div id="popupBlock" class="hide-popup-block">
-              <div class="popup-country"><span class="popup-name"></span></div>
-              <div><span class="popup-population-title">Population: </span><span class="popup-population"></span></div>
-              <div><span class="popup-value-title"></span><span class="popup-value"></span></div>
-              <img class="popup-img">
-            </div>
+        <div id="map" class="sectionConttent">
+          <div id="popupBlock" class="hide-popup-block">
+            <div class="popup-country"><span class="popup-name"></span></div>
+            <div><span class="popup-population-title">Population: </span><span class="popup-population"></span></div>
+            <div><span class="popup-value-title"></span><span id="popup-value" class="popup-value-confirmed"></span></div>
+            <img class="popup-img">
+          </div>
         </div>
       </section>
       <section class="control">
@@ -117,44 +123,43 @@
           <img src="assets/images/fullScreen.png">
         </div>
         <div class="sectionConttent">
-          <div class="tableFirstHeader"> header</div>
           <div class="tabFTable">
             <div class="tabFTable__header">
               <div class="fTableLine headerTable">
                 <div class="fTableLine__Country">
                   <div class="tabFTable__header_text">Country</div>
-                  <!-- <div class="tabFTable__header_arrows">
+                  <!-- <div class="table__header_arrows">
                     <div class="sortArrowTop sortArrowCountry notActiveArrow"><img src="assets/images/arrow.png"></div>
                     <div class="sortArrowBottom sortArrowCountry notActiveArrow"><img src="assets/images/arrow.png"></div>
                   </div>-->
                 </div>
-                <div class="fTableLine__Confirmed">
+                <div class="text-Confirmed">
                   <div class="tabFTable__header_text">Confirmed</div>
-                  <div class="tabFTable__header_arrows">
+                  <div class="table__header_arrows">
                     <div class="sortArrowTop sortArrowConfirmed notActiveArrow"><img src="assets/images/arrow.png"></div>
                     <div class="sortArrowBottom sortArrowConfirmed"><img src="assets/images/arrow.png"></div>
                   </div>
                 </div>
-                <div class="fTableLine__Recovered">
+                <div class="text-Recovered">
                   <div class="tabFTable__header_text">Recovered</div>
-                  <div class="tabFTable__header_arrows">
+                  <div class="table__header_arrows">
                     <div class="sortArrowTop sortArrowRecovered notActiveArrow"><img src="assets/images/arrow.png"></div>
                     <div class="sortArrowBottom sortArrowRecovered notActiveArrow"><img src="assets/images/arrow.png"></div>
                   </div>
                 </div>
-                <div class="fTableLine__Deaths">
+                <div class="text-Deaths">
                   <div class="tabFTable__header_text">Deaths</div>
-                  <div class="tabFTable__header_arrows">
+                  <div class="table__header_arrows">
                     <div class="sortArrowTop sortArrowDeaths notActiveArrow"><img src="assets/images/arrow.png"></div>
                     <div class="sortArrowBottom sortArrowDeaths notActiveArrow"><img src="assets/images/arrow.png"></div>
                   </div>
                 </div>
               </div>
               <div class="fTableLine fTableGlobal">
-                <div class="fTableLine__Country">Global</div>
-                <div class="fTableLine__Confirmed"></div>
-                <div class="fTableLine__Recovered"></div>
-                <div class="fTableLine__Deaths"></div>
+                <div class="fTableLine__Country">World</div>
+                <div class="text-Confirmed"></div>
+                <div class="text-Recovered"></div>
+                <div class="text-Deaths"></div>
               </div>
             </div>
             <div class="tabFTable__content"></div>
@@ -186,12 +191,12 @@
   </div>
 
   <script src="modules/data.js" defer></script>
-  <script src="index.js" defer></script>
-  <script src="modules/keyBoard.js" defer></script>
-  <script src="modules/keys.js" defer></script>
   <script src="modules/leaflet.js" defer></script>
   <script src="modules/map.js" defer></script>
   <script src="modules/geoCountries.js" defer></script>
+  <script src="index.js" defer></script>
+  <script src="modules/keyBoard.js" defer></script>
+  <script src="modules/keys.js" defer></script>
 </body>
 
 </html>
