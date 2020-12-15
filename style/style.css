@@ -75,6 +75,7 @@ section.fullScreen {
 
 .sectionConttent {
   height: 100%;
+  z-index: 2;
 }
 
 .mapAndControl {

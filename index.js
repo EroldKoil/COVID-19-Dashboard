@@ -12,6 +12,7 @@ let dashboard = {
     period: 'Total',
     absValue: true
   },
+  mapCovid:new MapCovid(),
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -129,7 +130,7 @@ function addListeners() {
         target = target.parentElement;
       }
       target.classList.toggle('fullScreen');
-      //dashboard.mapCovid.fullScreenMap();
+      dashboard.mapCovid.fullScreenMap();
       // изменение картинки для кнопки
       target.querySelector('img').src = `assets/images/${target.classList.contains('fullScreen')?'miniScreen':'fullScreen'}.png`
     });
@@ -365,11 +366,11 @@ function updateData(firstTime) {
   if (firstTime) {
     let updateDate = new Date(dashboard.lastApdate);
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
-    //dashboard.mapCovid.renderMap();
+    dashboard.mapCovid.renderMap();
   }
   createFirstTable(arraySort);
   createSecondTable(arraySort);
-  //dashboard.mapCovid.redrawMap(arraySort);
+  dashboard.mapCovid.redrawMap(arraySort);
 }
 
 
