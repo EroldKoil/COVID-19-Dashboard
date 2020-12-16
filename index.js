@@ -7,8 +7,8 @@ let dashboard = {
   // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
   arguments: {
     sortBy: 'Confirmed',
-    sortReverseFirst: false,
-    sortReverseSecond: false,
+    sortReverseFirst: true,
+    sortReverseSecond: true,
     period: 'Total',
     absValue: true
   },
@@ -82,7 +82,6 @@ let dashboard = {
     let i = 0;
 
     let str = Object.keys(this.allInfo)[i];
-    console.log('country = ' + Object.keys(this.allInfo)[i]);
     fetch(`https://api.covid19api.com/live/country/${dashboard.allInfo[dashboard.selectedCountry].Country}/status/confirmed`, this.requestOptions)
       .then(response => response.text())
       .then(result => {
@@ -138,6 +137,11 @@ function addListeners() {
     document.querySelector('.textarea').autofocus;
     document.querySelector('.searchContainer').classList.toggle('openSearchContainer');
     document.querySelector('.searchBtn__inset').classList.toggle('searchBtn__insetClose');
+    if (!document.querySelector('.searchContainer').classList.contains('openSearchContainer')) {
+      document.querySelector('.textarea').value = '';
+      searchCountry('');
+      selectLineAndArient(3);
+    }
   });
 
   // открытие клавы
@@ -155,14 +159,9 @@ function addListeners() {
   // Изменение строки поиска
   document.querySelector('.textarea').addEventListener('input', () => {
     searchCountry(document.querySelector('.textarea').value);
-    /*let selectedCountry = document.querySelector('.tableLine-selected:not(.tableSecond__line-hidden)');
-    if (!selectedCountry) {
-      document.querySelector('.tableLine-selected').classList.remove('.tableLine-selected');
-      let array = document.querySelectorAll('.tableSecond__line:not(.tableSecond__line-hidden)');
-      if (array.length > 0) {
-        array[0].classList.add('.tableLine-selected');
-      }
-    }*/
+    if (document.querySelector('.tableLine-selected') && !document.querySelector('.tableLine-selected').classList.contains('country-hidden')) {
+      selectLineAndArient(3);
+    }
   });
 
   // Клик по городу
@@ -180,6 +179,9 @@ function addListeners() {
   document.querySelectorAll('.headerTable, .tableSecond__header').forEach(el => {
     el.addEventListener('click', (event) => {
       let target = event.target;
+      if (target.classList.contains('fTableLine__Country') || target.parentElement.classList.contains('fTableLine__Country')) {
+        return;
+      }
       let oldSortBy = dashboard.arguments.sortBy;
       let oldReverseF = dashboard.arguments.sortReverseFirst;
       let oldReverseS = dashboard.arguments.sortReverseSecond;
@@ -188,11 +190,12 @@ function addListeners() {
         if (oldSortBy !== dashboard.arguments.sortBy) {
           updateData();
           changeSortBy();
+          changeTableReverse('.tabFTable__content', false)
         } else {
           if (el.classList.contains('headerTable') && oldReverseF !== dashboard.arguments.sortReverseFirst) {
             changeTableReverse('.tabFTable__content', true);
-          } else if (oldReverseS !== dashboard.arguments.sortReverseSecond) {
-            changeTableReverse('.tableSecond__content', true);
+          } else {
+            changeTableReverse('.tableSecond__content', oldReverseS !== dashboard.arguments.sortReverseSecond);
           }
         }
       }
@@ -200,19 +203,22 @@ function addListeners() {
       if (target.tagName === 'IMG' || target.classList[0] === 'table__header_arrows' || target.className === 'tabFTable__header_text') {
         target = target.parentElement;
       }
-      if (target.classList[0] === 'sortArrowTop' || target.classList[0] === 'sortArrowBottom') {
+      if (target.classList.contains('sortArrowTop') || target.classList.contains('sortArrowBottom')) {
         if (target.classList.contains('notActiveArrow')) {
           if (el.classList.contains('headerTable')) {
             dashboard.arguments.sortBy = target.parentElement.parentElement.className.substr(5);
-            dashboard.arguments.sortReverseFirst = target.classList.contains('sortArrowTop');
+            dashboard.arguments.sortReverseFirst = !target.classList.contains('sortArrowTop');
           } else {
-            dashboard.arguments.sortReverseSecond = target.classList.contains('sortArrowTop');
+            dashboard.arguments.sortReverseSecond = !target.classList.contains('sortArrowTop');
           }
           changeView();
         }
       } else {
         if (el.classList.contains('headerTable')) {
           dashboard.arguments.sortBy = target.className.substr(5);
+          if (dashboard.arguments.sortBy === oldSortBy) {
+            dashboard.arguments.sortReverseFirst = !dashboard.arguments.sortReverseFirst;
+          }
         } else {
           dashboard.arguments.sortReverseSecond = !dashboard.arguments.sortReverseSecond;
         }
@@ -311,24 +317,29 @@ function addListeners() {
 
 function updateData(firstTime) {
   let arraySort = getSortedArray();
+  let arrayReverse = dashboard.arguments.sortReverseFirst || dashboard.arguments.sortReverseSecond ? [...arraySort].reverse() : null;
+
+  createFirstTable(dashboard.arguments.sortReverseFirst ? arrayReverse : arraySort);
+  createSecondTable(dashboard.arguments.sortReverseSecond ? arrayReverse : arraySort);
+  selectLineAndArient(3);
+  console.log(document.querySelector('.textarea').value);
+  if (document.querySelector('.textarea').value) {
+    searchCountry(document.querySelector('.textarea').value);
+  }
   if (firstTime) {
     let updateDate = new Date(dashboard.lastApdate);
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
   }
-  createFirstTable(arraySort);
-  createSecondTable(arraySort);
-  selectLineAndArient(3);
   dashboard.mapCovid.redrawMap(arraySort);
-
 }
 
 function selectCountry(CountryCode, tableCount) {
   dashboard.selectedCountry = CountryCode === dashboard.selectedCountry ? 'world' : CountryCode;
   // View all countries
-  document.querySelectorAll('.country-hidden').forEach(el => {
+  /*document.querySelectorAll('.country-hidden').forEach(el => {
     el.classList.remove('country-hidden')
-  });
+  });*/
 
   document.querySelectorAll('.tableLine-selected').forEach(el => {
     el.classList.remove('tableLine-selected')
@@ -340,7 +351,6 @@ function selectCountry(CountryCode, tableCount) {
     document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
   }
   selectLineAndArient(tableCount);
-  document.querySelector('.textarea').value = '';
   dashboard.mapCovid.followSelectCountry();
 }
 
@@ -399,29 +409,25 @@ function createFirstTable(arraySort) {
   document.querySelector('.tabFTable__content').innerHTML = str;
 }
 
-// Изменяет видимость линий в таблице 1 в зависимости от строки поиска
+// Изменяет видимость линий в таблицах в зависимости от строки поиска
 function searchCountry(str) {
-  /*
-    [document.querySelectorAll('.tableSecond__line'), document.querySelectorAll('.fTableLine:not(.headerTable):not(.fTableGlobal)')].forEach(array => {
-      console.log(array, 'array');
-      array.forEach((el) => {
-        let name = dashboard el.getAttribute('name').toLowerCase()
-        if ( == str) {
-          el.classList.remove('country-hidden');
-        } else {
-          el.classList.add('country-hidden');
-        }
-      });
-    })*/
+  document.querySelectorAll('.tableSecond__line, .fTableLine:not(.headerTable):not(.fTableGlobal)').forEach(el => {
+    let name = dashboard.allInfo[el.getAttribute('name')].Country;
+    if (name.substring(0, str.length).toLowerCase() === str.toLowerCase()) {
+      el.classList.remove('country-hidden');
+    } else {
+      el.classList.add('country-hidden');
+    }
+  });
 }
 
 function changeTableReverse(tableClass, needReverse) {
   if (tableClass === '.tabFTable__content') {
     document.querySelector(`.tabFTable__header .table__header_arrows div:not(.notActiveArrow)`).classList.toggle('notActiveArrow');
-    document.querySelector(`.tabFTable__header .text-${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverseFirst?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+    document.querySelector(`.tabFTable__header .text-${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverseFirst?'Bottom':'Top'}`).classList.toggle('notActiveArrow');
   } else {
     document.querySelector(`.tableSecond__header .table__header_arrows div:not(.notActiveArrow)`).classList.toggle('notActiveArrow');
-    document.querySelector(`.tableSecond__header .sortArrow${dashboard.arguments.sortReverseSecond?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+    document.querySelector(`.tableSecond__header .sortArrow${dashboard.arguments.sortReverseSecond?'Bottom':'Top'}`).classList.toggle('notActiveArrow');
   }
 
   if (needReverse) {
@@ -430,7 +436,6 @@ function changeTableReverse(tableClass, needReverse) {
     table.innerHTML = ''
     array.forEach(el => table.append(el));
     selectLineAndArient(3);
-    //dashboard.selectedCountry === 'world' ? document.querySelector(`.${tableClass}[name=${dashboard.selectedCountry}]`).classList.add('');
   }
 }
 
@@ -441,6 +446,9 @@ function changeSortBy() {
   let buttonRight = sortBy === 'Confirmed' ? percentMin : sortBy === 'Recovered' ? percentMax / 2 : percentMax;
   document.querySelector('.argum-changer__button[name=sortBy]').style.right = `${buttonRight}%`;
   document.querySelector(`.argum-container[name=sortBy]`).style.left = `-${(buttonRight - 1) / 7 * 18}%`;
+
+  //document.querySelectorAll('.text-Selected').forEach(el => el.classList.remove('text-Selected'));
+  //document.querySelectorAll(`.tabFTable .text-${dashboard.arguments.sortBy}`).forEach(el => el.classList.add('text-Selected'));
 
   let secondH = document.querySelector('.tableSecond__header_country');
   secondH.className = `tableSecond__header_country text-${dashboard.arguments.sortBy}`;
@@ -469,7 +477,6 @@ function getSortedArray() {
   for (key in dashboardCopy) {
     let el = dashboardCopy[key];
 
-    //  if (sortBy !== 'Country') {
     let number = el[period + sortBy];
 
     if (arraySort.length === 0) {
@@ -487,11 +494,8 @@ function getSortedArray() {
         arraySort.push(el);
       }
     }
-    /*  } else {
-        arraySort.push(el);
-      }*/
   }
-  return arraySort.reverse();
+  return arraySort;
 }
 
 function startSession() {
