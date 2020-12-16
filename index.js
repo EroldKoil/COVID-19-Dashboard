@@ -5,6 +5,7 @@ let dashboard = {
   // argument - критерий для отбора данных: ('Confirmed' or 'Deaths' or 'Recovered')
   // period - за какой период рассматривается информация ('New' or 'Total')
   // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
+  
   arguments: {
     sortBy: 'Confirmed',
     sortReverseFirst: false,
@@ -50,6 +51,7 @@ let dashboard = {
         }
         this.lastApdate = object.Countries[0].Date;
         this.addPopulationAndFlag();
+        console.log(object)
       })
       .catch(error => console.log('error', error));
   },
