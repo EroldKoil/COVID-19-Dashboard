@@ -351,7 +351,7 @@ function selectCountry(CountryCode, tableCount) {
     document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
   }
   selectLineAndArient(tableCount);
-  //document.querySelector('.textarea').value = '';
+  dashboard.mapCovid.followSelectCountry();
 }
 
 function selectLineAndArient(tableCount) {
@@ -366,6 +366,8 @@ function selectLineAndArient(tableCount) {
       selectedLine = document.querySelector('.tableSecond__content .tableLine-selected');
       table = document.querySelector('.tableSecond__content');
       table.scrollTop = selectedLine.offsetTop - 130;
+    }else {
+      dashboard.mapCovid.followSelectCountry();
     }
   }
 }
