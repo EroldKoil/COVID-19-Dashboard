@@ -4,6 +4,7 @@ class MapCovid {
         this.southWest = L.latLng(-80.98155760646617, -185);
         this.northEast = L.latLng(89.99346179538875, 185);
         this.map = new L.Map('map', {
+            worldCopyJump: true,
             center: [0, 0],
             zoom: 2,
             maxZoom: 9,
@@ -20,16 +21,26 @@ class MapCovid {
             updateInterval: 10,
         });
         this.map.addLayer(tileLayer);
+
         this.legend.onAdd = function (map) {
-            const legendContent = L.DomUtil.create('div', 'info legend');
-            const grades = ['Confirmed', 'Deaths', 'Recovered'];
+            const legendContent = L.DomUtil.create('div', 'legend');
+            const values = ['Highest deaths','Highest infections','Highest recovered','Confirmed', 'Deaths', 'Recovered'];
 
-            for (let i = 0; i < grades.length; i++) {
-                legendContent.innerHTML +=
-                    '<i style="background:' + 'black' + '"></i> ' +
-                    grades[i];
+            for (let i = 0; i < values.length; i++) {
+                const legendValue = L.DomUtil.create('div', 'legend-value');
+                const valueCircle = L.DomUtil.create('div', 'legend-value-circle');
+                const valueText = L.DomUtil.create('div', 'legend-value-text');
+                valueText.textContent = `- ${values[i]}`;
+                if(values[i]==='Confirmed' || values[i]==='Deaths' || values[i]==='Recovered' ) {
+                    valueCircle.classList.add(`legend-circle-${values[i]}`);
+                }else {
+                    valueCircle.classList.add('icon-legend');
+                    valueCircle.classList.add(`icon-legend-${values[i].split(' ')[1]}`);
+                }
+                legendValue.appendChild(valueCircle);
+                legendValue.appendChild(valueText);
+                legendContent.appendChild(legendValue);
             }
-
             return legendContent;
         }
         this.legend.addTo(this.map);
@@ -38,6 +49,8 @@ class MapCovid {
     renderCircleMarker(data) {
         const selectSort = `${dashboard.arguments.period}${dashboard.arguments.sortBy}`;
         const selectColor = this.getColorMarker(dashboard.arguments.sortBy);
+        let value = data[0][selectSort];
+        let selectCountry = data[0];
         for (let key in data) {
             let percentOfCases = (data[key][selectSort] / dashboard.worldInfo[selectSort]) * 100;
             const casesCircle = L.circleMarker([data[key].coords.lat, data[key].coords.lon], {
@@ -49,8 +62,17 @@ class MapCovid {
                 opacity: 1,
                 width: 5,
             }).addTo(this.markerLayer);
+            if (value < data[key][selectSort]) {
+                value = data[key][selectSort];
+                selectCountry = data[key];
+            }
             this.initMouseEvent(data[key], undefined, casesCircle);
         }
+        const highValue = L.icon({
+           iconUrl: `./assets/images/${dashboard.arguments.sortBy}.svg`,
+            iconSize: [25,25],
+        });
+        const markerHigh= L.marker([selectCountry.coords.lat, selectCountry.coords.lon], {icon: highValue}).addTo(this.markerLayer);
         this.map.addControl(this.markerLayer);
     }
 
@@ -112,7 +134,7 @@ class MapCovid {
                     event, this.hideMoreInfo(event, element, blockInfoCountry, false)
                 });
                 element.on('click', (event) => {
-                        selectCountry(countryZone.properties.iso_a2,3);
+                    selectCountry(countryZone.properties.iso_a2, 3);
                 });
             }
         } else {
@@ -123,7 +145,7 @@ class MapCovid {
                 event, this.hideMoreInfo(event, element, blockInfoCountry, true)
             });
             element.on('click', (event) => {
-                selectCountry(country.CountryCode,3);
+                selectCountry(country.CountryCode, 3);
             });
         }
     }
@@ -135,7 +157,7 @@ class MapCovid {
         const titleValueCountry = document.querySelector('.popup-value-title');
         const populationCountry = document.querySelector('.popup-population');
 
-        this.popupPositionCorrect(event,blockInfoCountry);
+        this.popupPositionCorrect(event, blockInfoCountry);
 
         flagCountry.src = `https://restcountries.eu/data/${country.flag}.svg`;
         nameCountry.textContent = country.Country;
@@ -169,10 +191,10 @@ class MapCovid {
         const posX = event.containerPoint.x;
         const posY = event.containerPoint.y;
 
-        if(event.target._map._size) {
+        if (event.target._map._size) {
             clientHeight = event.target._map._size.x;
             clientWidth = event.target._map._size.y;
-        }else {
+        } else {
             return;
         }
 
@@ -182,7 +204,7 @@ class MapCovid {
             if (posY < clientHeight / 2 && posX > clientWidth / 2) {
                 blockInfoCountry.classList.remove('position-revers');
             } else {
-                if(posY > clientHeight / 2) {
+                if (posY > clientHeight / 2) {
                     blockInfoCountry.classList.remove('position-revers');
                 }
             }
@@ -190,7 +212,7 @@ class MapCovid {
     }
 
     followSelectCountry() {
-        if(dashboard.selectedCountry!=='world') {
+        if (dashboard.selectedCountry !== 'world') {
             this.map.flyTo(dashboard.allInfo[dashboard.selectedCountry].coords, 6);
         }
     }
