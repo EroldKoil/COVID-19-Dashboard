@@ -190,7 +190,8 @@ body::-webkit-scrollbar,
   transition-duration: 0.5s;
 }
 
-.country-hidden {
+.tabFTable__content .country-hidden,
+.tableSecond__content .country-hidden {
   display: none;
 }
 
@@ -326,6 +327,7 @@ body::-webkit-scrollbar,
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .table__header_arrows {}
@@ -398,7 +400,11 @@ body::-webkit-scrollbar,
   color: #ff6565;
 }
 
-.headerTable>*:hover {
+.text-Selected {
+  background-color: #00000026;
+}
+
+.headerTable>*:not(.fTableLine__Country):hover {
   background: #6d6d6d3d;
 }
 
