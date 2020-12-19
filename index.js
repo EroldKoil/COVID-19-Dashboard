@@ -1,4 +1,4 @@
-let dashboard = {
+var dashboard = {
   selectedCountry: 'world',
   //mapCovid: new MapCovid(),
 
@@ -14,6 +14,7 @@ let dashboard = {
     absValue: true
   },
   mapCovid:new MapCovid(),
+  graphic: new graphicCreator(),
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -79,7 +80,7 @@ let dashboard = {
 
   // для инфы по миру подневно
   //https://api.covid19api.com/world?from=2020-12-02T00:00:00Z&to=2020-12-14T00:00:00Z
-  addStatsPerDays() {
+  addStatsPerDays(country) {
     let j = 0;
     let i = 0;
     let interval = setInterval(() => {
@@ -96,6 +97,7 @@ let dashboard = {
             console.log(country);
 
             country.forEach((month) => {
+              console.log(month)
               let m = {
                 Confirmed: month.Confirmed,
                 Deaths: month.Deaths,
@@ -120,9 +122,7 @@ let dashboard = {
       }
     }, 800);
   }
-
 }
-
 function addListeners() {
   // Вкл/выкл полноэкранного режима
   document.querySelectorAll('.fullScreenBtn').forEach((button) => {
@@ -369,10 +369,12 @@ function updateData(firstTime) {
     let updateDate = new Date(dashboard.lastApdate);
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
+    dashboard.graphic.renderGraphic();
   }
   createFirstTable(arraySort);
   createSecondTable(arraySort);
   dashboard.mapCovid.redrawMap(arraySort);
+  dashboard.graphic.rerenderGraphic();
 }
 
 
@@ -391,6 +393,7 @@ function selectCountry(CountryCode, tableCount) {
   let table = document.querySelector(tableCount === 1 ? '.tableSecond__content' : '.tabFTable__content');
   table.scrollTop = selectedLine.offsetTop - 110;
   document.querySelector('.textarea').value = '';
+  dashboard.graphic.rerenderGraphic();
 }
 
 function createSecondTable(arraySort) {
@@ -544,3 +547,4 @@ function save() {
 }
 
 startSession();
+
