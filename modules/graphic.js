@@ -115,13 +115,13 @@ graphicCreator.prototype.generateConfig = function(){
     this.config.data = [];
 
 
-    if (!dashboard.arguments.absValue) {
-        this.datasets.forEach((element, index) => {
-            if (element.label == dashboard.arguments.sortBy) {
-                this.datasets[index].data = this.datasets[index].data.map(element)
-            }
-        });
-    }
+    // if (!dashboard.arguments.absValue) {
+    //     this.datasets.forEach((element, index) => {
+    //         if (element.label == dashboard.arguments.sortBy) {
+    //             this.datasets[index].data = this.datasets[index].data.map(element)
+    //         }
+    //     });
+    // }
 }
 
 graphicCreator.prototype.renderGraphic = function() {
@@ -146,7 +146,6 @@ graphicCreator.prototype.rerenderGraphic = function() {
 
     if (dashboard.arguments.sortBy == "Confirmed") {
         resultObj = this.datasets[0];
-        console.log(this.datasets[0].data)
     }
     if (dashboard.arguments.sortBy == "Recovered") {
         resultObj = this.datasets[1];
@@ -159,7 +158,6 @@ graphicCreator.prototype.rerenderGraphic = function() {
             .then(response => response.text())
             .then(result => {
                 let object = JSON.parse(result);
-                console.log(object)
 
                 //заполнение массивов данными
                 for (item in object){
@@ -181,6 +179,21 @@ graphicCreator.prototype.rerenderGraphic = function() {
                             resultObj.data.push(element[1]);
                         })
                     }
+                }
+
+                //last apdated or all time
+                if (dashboard.arguments.period == "New") {
+                    for (let i=1; i<resultObj.data.length; i++) {
+                        resultObj.data[i] = resultObj.data[i] - resultObj.data[i-1];
+                    }
+                }
+
+                //на 100 000 населения или absolute
+                let population = 7827000000;
+                if (!dashboard.arguments.absValue) {
+                    resultObj.data = resultObj.data.map(element => {
+                        return Math.floor(100000 / population * element);
+                    })
                 }
 
                 let labels = Object.keys(object['cases']);
@@ -203,9 +216,7 @@ graphicCreator.prototype.rerenderGraphic = function() {
                     if (item == "cases" && dashboard.arguments.sortBy == "Confirmed") {
                         let mass = Object.entries(object[item]);
                         mass.forEach(element => {
-                            if (dashboard.arguments.absValue){
-                                resultObj.data.push(element[1]);
-                            }
+                            resultObj.data.push(element[1]);
                         })
                     }  
                     if (item == "recovered" && dashboard.arguments.sortBy == "Recovered") {
@@ -221,9 +232,21 @@ graphicCreator.prototype.rerenderGraphic = function() {
                         })
                     }
                 }
-                // if (!dashboard.arguments.absValue) {
-                //     resultObj.data.map = 
-                // }
+
+                //last apdated or all time
+                if (dashboard.arguments.period == "New") {
+                    for (let i=1; i<resultObj.data.length; i++) {
+                        resultObj.data[i] = resultObj.data[i] - resultObj.data[i-1];
+                    }
+                }
+
+                //на 100 000 населения или absolute
+                let population = dashboard.allInfo[dashboard.selectedCountry].population;
+                if (!dashboard.arguments.absValue) {
+                    resultObj.data = resultObj.data.map(element => {
+                        return Math.floor(100000 / population * element);
+                    })
+                }
 
                 let labels = Object.keys(object['cases']);
                 let datasets = [];

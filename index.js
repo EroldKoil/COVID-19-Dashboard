@@ -8,8 +8,8 @@ var dashboard = {
   
   arguments: {
     sortBy: 'Confirmed',
-    sortReverseFirst: false,
-    sortReverseSecond: false,
+    sortReverseFirst: true,
+    sortReverseSecond: true,
     period: 'Total',
     absValue: true
   },
@@ -83,44 +83,38 @@ var dashboard = {
   addStatsPerDays(country) {
     let j = 0;
     let i = 0;
-    let interval = setInterval(() => {
-      let str = Object.keys(this.allInfo)[i];
-      console.log('country = ' + Object.keys(this.allInfo)[i]);
-      fetch(`https://api.covid19api.com/live/country/${Object.keys(this.allInfo)[i]}/status/confirmed`, this.requestOptions)
-        .then(response => response.text())
-        .then(result => {
 
-          let country = JSON.parse(result);
-          console.log('end ' + str);
-          if (country.success !== false) {
-            console.log('end 2 ' + str);
-            console.log(country);
+    let str = Object.keys(this.allInfo)[i];
+    fetch(`https://api.covid19api.com/live/country/${dashboard.allInfo[dashboard.selectedCountry].Country}/status/confirmed`, this.requestOptions)
+      .then(response => response.text())
+      .then(result => {
 
-            country.forEach((month) => {
-              console.log(month)
-              let m = {
-                Confirmed: month.Confirmed,
-                Deaths: month.Deaths,
-                Recovered: month.Recovered,
-                Active: month.Active,
-                Date: month.Date
-              };
-            })
-            j++;
-            if (j >= this.allInfo.length) {
+        let country = JSON.parse(result);
+        if (country.success !== false) {
 
-            }
-          }
-        }).catch(error => {
-          console.log('error', error);
+          country.forEach((month) => {
+            let m = {
+              Confirmed: month.Confirmed,
+              Deaths: month.Deaths,
+              Recovered: month.Recovered,
+              Active: month.Active,
+              Date: month.Date
+            };
+          })
           j++;
-        });
-      i++;
-      if (i >= Object.keys(this.allInfo).length) {
-        clearInterval(interval);
-        return;
-      }
-    }, 800);
+          if (j >= this.allInfo.length) {
+
+          }
+        }
+      }).catch(error => {
+        console.log('error', error);
+        j++;
+      });
+    i++;
+    if (i >= Object.keys(this.allInfo).length) {
+      clearInterval(interval);
+      return;
+    }
   }
 }
 function addListeners() {
@@ -132,6 +126,7 @@ function addListeners() {
         target = target.parentElement;
       }
       target.classList.toggle('fullScreen');
+      document.querySelector('.control').classList.toggle('control-full-screen');
       dashboard.mapCovid.fullScreenMap();
       // изменение картинки для кнопки
       target.querySelector('img').src = `assets/images/${target.classList.contains('fullScreen')?'miniScreen':'fullScreen'}.png`
@@ -144,96 +139,92 @@ function addListeners() {
     document.querySelector('.textarea').autofocus;
     document.querySelector('.searchContainer').classList.toggle('openSearchContainer');
     document.querySelector('.searchBtn__inset').classList.toggle('searchBtn__insetClose');
+    if (!document.querySelector('.searchContainer').classList.contains('openSearchContainer')) {
+      document.querySelector('.textarea').value = '';
+      searchCountry('');
+      selectLineAndArient(3);
+    }
   });
 
   // открытие клавы
   document.querySelector('.openKeyboardBtn').addEventListener('click', (event) => {
     document.querySelector('.textarea').autofocus;
-    let keyboardContainer = document.querySelector('.keyboardContainer');
-    keyboardContainer.classList.toggle('keyboardContainerHidden');
-    if (!isMute) {
-      let voice = document.getElementById('openKeyboardAudio');
-      voice.currentTime = 0;
-      voice.play();
-    }
+
+    let voice = document.getElementById('openKeyboardAudio');
+    voice.currentTime = 0;
+    voice.play();
   });
+
+  function openCloseKeyboard() {
+    let keyB = document.querySelector('.keyboardContainer');
+    keyB.classList.toggle('keyboardContainerHidden');
+    if (keyB.classList.contains('keyboardContainerHidden')) {}
+
+  }
 
   // Изменение строки поиска
   document.querySelector('.textarea').addEventListener('input', () => {
     searchCountry(document.querySelector('.textarea').value);
-    /*let selectedCountry = document.querySelector('.tableSecond__line_selected:not(.tableSecond__line-hidden)');
-    if (!selectedCountry) {
-      document.querySelector('.tableSecond__line_selected').classList.remove('.tableSecond__line_selected');
-      let array = document.querySelectorAll('.tableSecond__line:not(.tableSecond__line-hidden)');
-      if (array.length > 0) {
-        array[0].classList.add('.tableSecond__line_selected');
-      }
-    }*/
-  });
-
-  // Клик по таблице 2
-  document.querySelector('.tableSecond__content').addEventListener('click', (event) => {
-    let target = event.target;
-    if (target.classList[0] !== 'tableSecond__content') {
-      while (target.classList[0] != 'tableSecond__line') {
-        target = target.parentElement;
-      }
-      selectCountry(target.getAttribute('name'), 2);
+    if (document.querySelector('.tableLine-selected') && !document.querySelector('.tableLine-selected').classList.contains('country-hidden')) {
+      selectLineAndArient(3);
     }
   });
 
-  // Клик по таблице 1
-  document.querySelector('.tabFTable__content').addEventListener('click', (event) => {
-    let target = event.target;
-    if (target.classList[0] !== 'tabFTable__content') {
-      while (target.classList[0] != 'fTableLine') {
+  // Клик по городу
+  document.querySelectorAll('.tabFTable__content, .tableSecond__content').forEach(el => {
+    el.addEventListener('click', (event) => {
+      let target = event.target;
+      while (!target.classList.contains('fTableLine') && !target.classList.contains('tableSecond__line')) {
         target = target.parentElement;
       }
-      selectCountry(target.getAttribute('name'), 1);
-    }
+      selectCountry(target.getAttribute('name'), target.classList.contains('fTableLine') ? 1 : 2);
+    });
   });
 
-  // Изменение сортировки в первой таблице
-
+  // Изменение сортировки таблиц
   document.querySelectorAll('.headerTable, .tableSecond__header').forEach(el => {
     el.addEventListener('click', (event) => {
       let target = event.target;
+      if (target.classList.contains('fTableLine__Country') || target.parentElement.classList.contains('fTableLine__Country')) {
+        return;
+      }
       let oldSortBy = dashboard.arguments.sortBy;
-      let oldReverse = dashboard.arguments.sortReverseFirst;
-      let sortBy = '';
+      let oldReverseF = dashboard.arguments.sortReverseFirst;
+      let oldReverseS = dashboard.arguments.sortReverseSecond;
 
       let changeView = () => {
-        if (el.classList.contains('headerTable')) {
-          dashboard.arguments.sortBy = sortBy;
-        }
-
         if (oldSortBy !== dashboard.arguments.sortBy) {
           updateData();
           changeSortBy();
-        }
-        if (el.classList.contains('headerTable')) {
-          changeTableReverse('.tabFTable__content', oldReverse !== dashboard.arguments.sortReverseFirst);
+          changeTableReverse('.tabFTable__content', false)
         } else {
-          changeTableReverse('.tableSecond__content', oldReverse !== dashboard.arguments.sortReverseFirst);
+          if (el.classList.contains('headerTable') && oldReverseF !== dashboard.arguments.sortReverseFirst) {
+            changeTableReverse('.tabFTable__content', true);
+          } else {
+            changeTableReverse('.tableSecond__content', oldReverseS !== dashboard.arguments.sortReverseSecond);
+          }
         }
       }
 
       if (target.tagName === 'IMG' || target.classList[0] === 'table__header_arrows' || target.className === 'tabFTable__header_text') {
         target = target.parentElement;
       }
-      if (target.classList[0] === 'sortArrowTop' || target.classList[0] === 'sortArrowBottom') {
+      if (target.classList.contains('sortArrowTop') || target.classList.contains('sortArrowBottom')) {
         if (target.classList.contains('notActiveArrow')) {
           if (el.classList.contains('headerTable')) {
-            sortBy = target.parentElement.parentElement.className.substr(5);
-            dashboard.arguments.sortReverseFirst = target.classList.contains('sortArrowTop');
+            dashboard.arguments.sortBy = target.parentElement.parentElement.className.substr(5);
+            dashboard.arguments.sortReverseFirst = !target.classList.contains('sortArrowTop');
           } else {
-            dashboard.arguments.sortReverseSecond = target.classList.contains('sortArrowTop');
+            dashboard.arguments.sortReverseSecond = !target.classList.contains('sortArrowTop');
           }
           changeView();
         }
       } else {
         if (el.classList.contains('headerTable')) {
-          sortBy = target.className.substr(5);
+          dashboard.arguments.sortBy = target.className.substr(5);
+          if (dashboard.arguments.sortBy === oldSortBy) {
+            dashboard.arguments.sortReverseFirst = !dashboard.arguments.sortReverseFirst;
+          }
         } else {
           dashboard.arguments.sortReverseSecond = !dashboard.arguments.sortReverseSecond;
         }
@@ -328,80 +319,72 @@ function addListeners() {
     }
   });
 
-  // Изменение сортировки в второй таблице
-  /*document.querySelector('.tableSecond__header').addEventListener('click', (event) => {
-    let target = event.target;
-    let oldReverse = dashboard.arguments.sortReverseFirst;
-    let sortBy = '';
-
-    let changeView = () => {
-      dashboard.arguments.sortBy = sortBy;
-      if (oldSortBy !== dashboard.arguments.sortBy) {
-        updateData();
-        changeSortBy();
-      }
-      changeTableReverse('tableSecond__header', oldReverse !== dashboard.arguments.sortReverseFirst);
-    }
-
-    if (target.tagName === 'IMG' || target.classList[0] === 'table__header_arrows' || target.className === 'tableSecond__header_country') {
-      target = target.parentElement;
-    }
-    if (target.classList[0] === 'sortArrowTop' || target.classList[0] === 'sortArrowBottom') {
-      if (target.classList.contains('notActiveArrow')) {
-        sortBy = target.parentElement.parentElement.className.substr(5);
-        dashboard.arguments.sortReverseFirst = target.classList.contains('sortArrowTop');
-        changeView();
-      }
-    } else {
-      sortBy = target.className.substr(5);
-      if (sortBy !== dashboard.arguments.sortBy) {
-        dashboard.arguments.sortReverseFirst = true;
-      }
-      dashboard.arguments.sortReverseFirst = !dashboard.arguments.sortReverseFirst;
-      changeView();
-    }
-  });*/
 }
 
 function updateData(firstTime) {
   let arraySort = getSortedArray();
+  let arrayReverse = dashboard.arguments.sortReverseFirst || dashboard.arguments.sortReverseSecond ? [...arraySort].reverse() : null;
+
+  createFirstTable(dashboard.arguments.sortReverseFirst ? arrayReverse : arraySort);
+  createSecondTable(dashboard.arguments.sortReverseSecond ? arrayReverse : arraySort);
+  selectLineAndArient(3);
+  if (document.querySelector('.textarea').value) {
+    searchCountry(document.querySelector('.textarea').value);
+  }
   if (firstTime) {
     let updateDate = new Date(dashboard.lastApdate);
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
     dashboard.graphic.renderGraphic();
   }
-  createFirstTable(arraySort);
-  createSecondTable(arraySort);
   dashboard.mapCovid.redrawMap(arraySort);
   dashboard.graphic.rerenderGraphic();
 }
 
-
 function selectCountry(CountryCode, tableCount) {
-  if (dashboard.selectedCountry !== 'world') {
-    document.querySelector('.tableSecond__line_selected').classList.remove('tableSecond__line_selected');
-    document.querySelector('.fTableLine-selected').classList.remove('fTableLine-selected');
+  dashboard.selectedCountry = CountryCode === dashboard.selectedCountry ? 'world' : CountryCode;
+  // View all countries
+  /*document.querySelectorAll('.country-hidden').forEach(el => {
+    el.classList.remove('country-hidden')
+  });*/
+
+  document.querySelectorAll('.tableLine-selected').forEach(el => {
+    el.classList.remove('tableLine-selected')
+  });
+
+  if (dashboard.selectedCountry === 'world') {
+    document.querySelector('.controlCountry').innerText = 'WORLD';
+  } else {
+    document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
   }
-
-  document.querySelector(`.tableSecond__line[name=${CountryCode}]`).classList.add('tableSecond__line_selected');
-  document.querySelector(`.fTableLine[name=${CountryCode}]`).classList.add('fTableLine-selected');
-  dashboard.selectedCountry = CountryCode;
-  document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
-
-  let selectedLine = document.querySelector(tableCount === 1 ? '.tableSecond__line_selected' : '.fTableLine-selected');
-  let table = document.querySelector(tableCount === 1 ? '.tableSecond__content' : '.tabFTable__content');
-  table.scrollTop = selectedLine.offsetTop - 110;
-  document.querySelector('.textarea').value = '';
+  selectLineAndArient(tableCount);
   dashboard.graphic.rerenderGraphic();
+  dashboard.mapCovid.followSelectCountry();
+}
+
+function selectLineAndArient(tableCount) {
+  if (dashboard.selectedCountry !== 'world') {
+    document.querySelectorAll(`.tableSecond__line[name=${dashboard.selectedCountry}] , .fTableLine[name=${dashboard.selectedCountry}]`).forEach(el => {
+      el.classList.add('tableLine-selected');
+    });
+    let selectedLine = document.querySelector(`${tableCount === 1 ? '.tableSecond__content' : '.tabFTable__content'} .tableLine-selected`);
+    let table = document.querySelector(tableCount === 1 ? '.tableSecond__content' : '.tabFTable__content');
+    table.scrollTop = selectedLine.offsetTop - (tableCount === 1 || tableCount === 3 ? 130 : 110);
+    if (tableCount === 3) {
+      selectedLine = document.querySelector('.tableSecond__content .tableLine-selected');
+      table = document.querySelector('.tableSecond__content');
+      table.scrollTop = selectedLine.offsetTop - 130;
+    } else {
+      dashboard.mapCovid.followSelectCountry();
+    }
+  }
 }
 
 function createSecondTable(arraySort) {
   let str = '';
-
   arraySort.forEach((el) => {
     str += `<div class="tableSecond__line" name="${el.CountryCode}">
-		<div class="tableSecond__line__number">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
+		<div class="tableSecond__line__number text-${dashboard.arguments.sortBy}">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
 		<div class="tableSecond__line__name">${el.Country}</div>
 		<div class="tableSecond__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
 		</div>
@@ -434,29 +417,25 @@ function createFirstTable(arraySort) {
   document.querySelector('.tabFTable__content').innerHTML = str;
 }
 
-// Изменяет видимость линий в таблице 1 в зависимости от строки поиска
+// Изменяет видимость линий в таблицах в зависимости от строки поиска
 function searchCountry(str) {
-  /*
-    [document.querySelectorAll('.tableSecond__line'), document.querySelectorAll('.fTableLine:not(.headerTable):not(.fTableGlobal)')].forEach(array => {
-      console.log(array, 'array');
-      array.forEach((el) => {
-        let name = dashboard el.getAttribute('name').toLowerCase()
-        if ( == str) {
-          el.classList.remove('country-hidden');
-        } else {
-          el.classList.add('country-hidden');
-        }
-      });
-    })*/
+  document.querySelectorAll('.tableSecond__line, .fTableLine:not(.headerTable):not(.fTableGlobal)').forEach(el => {
+    let name = dashboard.allInfo[el.getAttribute('name')].Country;
+    if (name.substring(0, str.length).toLowerCase() === str.toLowerCase()) {
+      el.classList.remove('country-hidden');
+    } else {
+      el.classList.add('country-hidden');
+    }
+  });
 }
 
 function changeTableReverse(tableClass, needReverse) {
   if (tableClass === '.tabFTable__content') {
     document.querySelector(`.tabFTable__header .table__header_arrows div:not(.notActiveArrow)`).classList.toggle('notActiveArrow');
-    document.querySelector(`.tabFTable__header .text-${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverseFirst?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+    document.querySelector(`.tabFTable__header .text-${dashboard.arguments.sortBy} .sortArrow${dashboard.arguments.sortReverseFirst?'Bottom':'Top'}`).classList.toggle('notActiveArrow');
   } else {
     document.querySelector(`.tableSecond__header .table__header_arrows div:not(.notActiveArrow)`).classList.toggle('notActiveArrow');
-    document.querySelector(`.tableSecond__header .sortArrow${dashboard.arguments.sortReverseSecond?'Top':'Bottom'}`).classList.toggle('notActiveArrow');
+    document.querySelector(`.tableSecond__header .sortArrow${dashboard.arguments.sortReverseSecond?'Bottom':'Top'}`).classList.toggle('notActiveArrow');
   }
 
   if (needReverse) {
@@ -464,6 +443,7 @@ function changeTableReverse(tableClass, needReverse) {
     let array = [...table.children].reverse();
     table.innerHTML = ''
     array.forEach(el => table.append(el));
+    selectLineAndArient(3);
   }
 }
 
@@ -475,6 +455,9 @@ function changeSortBy() {
   document.querySelector('.argum-changer__button[name=sortBy]').style.right = `${buttonRight}%`;
   document.querySelector(`.argum-container[name=sortBy]`).style.left = `-${(buttonRight - 1) / 7 * 18}%`;
 
+  //document.querySelectorAll('.text-Selected').forEach(el => el.classList.remove('text-Selected'));
+  //document.querySelectorAll(`.tabFTable .text-${dashboard.arguments.sortBy}`).forEach(el => el.classList.add('text-Selected'));
+
   let secondH = document.querySelector('.tableSecond__header_country');
   secondH.className = `tableSecond__header_country text-${dashboard.arguments.sortBy}`;
   secondH.innerText = dashboard.arguments.sortBy;
@@ -482,7 +465,6 @@ function changeSortBy() {
   secondArrow.className = `${secondArrow.classList[0]} sortArrow${dashboard.arguments.sortBy}`;
   secondArrow = document.querySelector('.tableSecond__header .notActiveArrow');
   secondArrow.className = `${secondArrow.classList[0]} sortArrow${dashboard.arguments.sortBy} notActiveArrow`;
-
 }
 
 function getSortedArray() {
@@ -503,7 +485,6 @@ function getSortedArray() {
   for (key in dashboardCopy) {
     let el = dashboardCopy[key];
 
-    //  if (sortBy !== 'Country') {
     let number = el[period + sortBy];
 
     if (arraySort.length === 0) {
@@ -521,11 +502,8 @@ function getSortedArray() {
         arraySort.push(el);
       }
     }
-    /*  } else {
-        arraySort.push(el);
-      }*/
   }
-  return arraySort.reverse();
+  return arraySort;
 }
 
 function startSession() {
@@ -547,4 +525,3 @@ function save() {
 }
 
 startSession();
-

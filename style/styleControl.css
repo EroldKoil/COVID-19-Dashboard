@@ -3,17 +3,46 @@
   width: 100%;
   display: flex;
   color: #b3b3b3;
+  justify-content: center;
+  border-bottom-left-radius: 3px;
+}
+
+section.control-full-screen {
+  position: fixed;
+  bottom: 1%;
+  width: 98%;
+  z-index: 5;
+  height: 29%;
+  margin: 0 auto;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  left: 1%;
+}
+
+section.control-full-screen .control__panel {
+  max-width: 500px;
+  border-left: solid 1px #4c4c4c;
+}
+
+section.control-full-screen .control__diagram {
+  max-width: 250px;
+  border-right: solid 1px #4c4c4c;
 }
 
 .control__panel {
   width: 70%;
   border-right: solid 2px #6565654f;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-bottom: 1px;
 }
 
 .control__panel_countryAndDate {
   display: flex;
   justify-content: space-between;
   height: 18%;
+  min-height: 28px;
 }
 
 .controlCountry {
@@ -30,6 +59,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom-left-radius: 5px;
 }
 
 .control__panel_population {
@@ -44,11 +74,12 @@
 }
 
 .control__panel_buttons {
-  width: calc(100% - 3px);
-  height: 30%;
+  width: calc(100% - 8px);
   display: flex;
   padding: 0px 0px 0 3px;
-  justify-content: space-around;
+  justify-content: space-between;
+  min-height: 72px;
+  margin: 0 0 3px 3px;
 }
 
 .control-argum {
@@ -91,6 +122,7 @@
   align-items: center;
   text-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black;
   font-family: fantasy;
+  font-size: 1.5em;
 }
 
 .control-argum__view {
