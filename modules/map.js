@@ -24,16 +24,16 @@ class MapCovid {
 
         this.legend.onAdd = function (map) {
             const legendContent = L.DomUtil.create('div', 'legend');
-            const values = ['Highest deaths','Highest infections','Highest recovered','Confirmed', 'Deaths', 'Recovered'];
+            const values = ['Highest deaths', 'Highest infections', 'Highest recovered', 'Confirmed', 'Deaths', 'Recovered'];
 
             for (let i = 0; i < values.length; i++) {
                 const legendValue = L.DomUtil.create('div', 'legend-value');
                 const valueCircle = L.DomUtil.create('div', 'legend-value-circle');
                 const valueText = L.DomUtil.create('div', 'legend-value-text');
                 valueText.textContent = `- ${values[i]}`;
-                if(values[i]==='Confirmed' || values[i]==='Deaths' || values[i]==='Recovered' ) {
+                if (values[i] === 'Confirmed' || values[i] === 'Deaths' || values[i] === 'Recovered') {
                     valueCircle.classList.add(`legend-circle-${values[i]}`);
-                }else {
+                } else {
                     valueCircle.classList.add('icon-legend');
                     valueCircle.classList.add(`icon-legend-${values[i].split(' ')[1]}`);
                 }
@@ -69,13 +69,13 @@ class MapCovid {
             this.initMouseEvent(data[key], undefined, casesCircle);
         }
         const highValue = L.icon({
-           iconUrl: `./assets/images/${dashboard.arguments.sortBy}.svg`,
-            iconSize: [25,25],
+            iconUrl: `./assets/images/${dashboard.arguments.sortBy}.svg`,
+            iconSize: [25, 25],
         });
-        const markerHigh= L.marker([selectCountry.coords.lat, selectCountry.coords.lon], {icon: highValue}).addTo(this.markerLayer);
+        const markerHigh = L.marker([selectCountry.coords.lat, selectCountry.coords.lon], {icon: highValue}).addTo(this.markerLayer);
+        this.initMouseEvent(selectCountry, undefined, markerHigh);
         this.map.addControl(this.markerLayer);
     }
-
 
     renderBorderCountry(dataCountries) {
         let coordsCountry;
@@ -213,7 +213,16 @@ class MapCovid {
 
     followSelectCountry() {
         if (dashboard.selectedCountry !== 'world') {
-            this.map.flyTo(dashboard.allInfo[dashboard.selectedCountry].coords, 6);
+            if (dashboard.selectedCountry !== 'US' &&
+                dashboard.selectedCountry !== 'AU' &&
+                dashboard.selectedCountry !== 'CN' &&
+                dashboard.selectedCountry !== 'CA' &&
+                dashboard.selectedCountry !== 'KZ' &&
+                dashboard.selectedCountry !== 'BR') {
+                this.map.flyTo(dashboard.allInfo[dashboard.selectedCountry].coords, 6);
+            } else {
+                this.map.flyTo(dashboard.allInfo[dashboard.selectedCountry].coords, 4);
+            }
         }
     }
 

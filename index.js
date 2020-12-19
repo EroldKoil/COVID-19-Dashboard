@@ -13,6 +13,7 @@ let dashboard = {
     absValue: true
   },
   mapCovid: new MapCovid(),
+  mapPie: new MapPie(),
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -332,7 +333,6 @@ function openCloseKeyboard() {
 function updateData(firstTime) {
   let arraySort = getSortedArray();
   let arrayReverse = dashboard.arguments.sortReverseFirst || dashboard.arguments.sortReverseSecond ? [...arraySort].reverse() : null;
-
   createFirstTable(dashboard.arguments.sortReverseFirst ? arrayReverse : arraySort);
   createSecondTable(dashboard.arguments.sortReverseSecond ? arrayReverse : arraySort);
   changeTableReverse('.tabFTable__content', false)
@@ -345,6 +345,7 @@ function updateData(firstTime) {
     let updateDate = new Date(dashboard.lastApdate);
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
+    dashboard.mapPie.renderPie();
   }
   dashboard.mapCovid.redrawMap(arraySort);
 }
@@ -367,6 +368,7 @@ function selectCountry(CountryCode, tableCount) {
   }
   selectLineAndArient(tableCount);
   dashboard.mapCovid.followSelectCountry();
+  dashboard.mapPie.selectCountry();
 }
 
 function selectLineAndArient(tableCount) {
