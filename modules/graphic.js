@@ -183,9 +183,11 @@ graphicCreator.prototype.rerenderGraphic = function() {
 
                 //last apdated or all time
                 if (dashboard.arguments.period == "New") {
+                    let mass = [];
                     for (let i=1; i<resultObj.data.length; i++) {
-                        resultObj.data[i] = resultObj.data[i] - resultObj.data[i-1];
+                        mass.push(resultObj.data[i] - resultObj.data[i-1]);
                     }
+                    resultObj.data = mass.slice();
                 }
 
                 //на 100 000 населения или absolute
