@@ -30,7 +30,6 @@ let dashboard = {
         let object = JSON.parse(result);
         object.Countries.forEach((el) => {
           this.allInfo[el.CountryCode] = {
-            //  Slug: el.Slug,
             Country: el.Country,
             CountryCode: el.CountryCode,
             NewConfirmed: el.NewConfirmed,
