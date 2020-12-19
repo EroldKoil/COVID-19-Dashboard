@@ -1,9 +1,9 @@
 .searchContainer {
   height: 40px;
   width: 99%;
-  max-width: 500px;
+  /* max-width: 500px; */
   position: absolute;
-  left: -83%;
+  left: -82%;
   background-color: #0000002b;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;

@@ -4,29 +4,32 @@
   display: flex;
   color: #b3b3b3;
   justify-content: center;
-  border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 7px;
 }
 
 section.control-full-screen {
   position: fixed;
   bottom: 1%;
-  width: 98%;
+  width: 50%;
   z-index: 5;
   height: 29%;
-  margin: 0 auto;
   border-top-right-radius: 0px;
   border-top-left-radius: 0px;
-  left: 1%;
+  min-width: 490px;
+  max-width: 716px;
+  margin: 0 auto;
 }
 
 section.control-full-screen .control__panel {
-  max-width: 500px;
-  border-left: solid 1px #4c4c4c;
+  /* max-width: 500px; */
+  /* border-left: solid 1px #4c4c4c; */
+  /* background-color: #404040; */
 }
 
 section.control-full-screen .control__diagram {
   max-width: 250px;
-  border-right: solid 1px #4c4c4c;
+  /* border-right: solid 1px #4c4c4c; */
+  /* background-color: #404040; */
 }
 
 .control__panel {

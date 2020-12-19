@@ -126,6 +126,8 @@ function addListeners() {
       }
       target.classList.toggle('fullScreen');
       document.querySelector('.control').classList.toggle('control-full-screen');
+      document.querySelector('body').classList.toggle('bodyFullScreen');
+      document.querySelector('.blackBG').classList.toggle('blackBG-On');
       dashboard.mapCovid.fullScreenMap();
       // изменение картинки для кнопки
       target.querySelector('img').src = `assets/images/${target.classList.contains('fullScreen')?'miniScreen':'fullScreen'}.png`
@@ -142,24 +144,17 @@ function addListeners() {
       document.querySelector('.textarea').value = '';
       searchCountry('');
       selectLineAndArient(3);
+      if (!document.querySelector('.keyboardContainer').classList.contains('keyboardContainerHidden')) {
+        openCloseKeyboard();
+      }
     }
   });
 
   // открытие клавы
   document.querySelector('.openKeyboardBtn').addEventListener('click', (event) => {
     document.querySelector('.textarea').autofocus;
-
-    let voice = document.getElementById('openKeyboardAudio');
-    voice.currentTime = 0;
-    voice.play();
+    openCloseKeyboard();
   });
-
-  function openCloseKeyboard() {
-    let keyB = document.querySelector('.keyboardContainer');
-    keyB.classList.toggle('keyboardContainerHidden');
-    if (keyB.classList.contains('keyboardContainerHidden')) {}
-
-  }
 
   // Изменение строки поиска
   document.querySelector('.textarea').addEventListener('input', () => {
@@ -295,6 +290,7 @@ function addListeners() {
         });
         document.onmousemove = null;
         document.onmouseup = null;
+
       }
 
       document.onmousemove = (event1) => {
@@ -320,12 +316,26 @@ function addListeners() {
 
 }
 
+function openCloseKeyboard() {
+  let keyB = document.querySelector('.keyboardContainer');
+  keyB.classList.toggle('keyboardContainerHidden');
+  let voice;
+  if (keyB.classList.contains('keyboardContainerHidden')) {
+    voice = document.getElementById('closeKeyboardAudio');
+  } else {
+    voice = document.getElementById('openKeyboardAudio');
+  }
+  voice.currentTime = 0;
+  voice.play();
+}
+
 function updateData(firstTime) {
   let arraySort = getSortedArray();
   let arrayReverse = dashboard.arguments.sortReverseFirst || dashboard.arguments.sortReverseSecond ? [...arraySort].reverse() : null;
 
   createFirstTable(dashboard.arguments.sortReverseFirst ? arrayReverse : arraySort);
   createSecondTable(dashboard.arguments.sortReverseSecond ? arrayReverse : arraySort);
+  changeTableReverse('.tabFTable__content', false)
   selectLineAndArient(3);
   console.log(document.querySelector('.textarea').value);
   if (document.querySelector('.textarea').value) {
