@@ -1,10 +1,11 @@
-let dashboard = {
+var dashboard = {
   selectedCountry: 'world',
   //mapCovid: new MapCovid(),
 
   // argument - критерий для отбора данных: ('Confirmed' or 'Deaths' or 'Recovered')
   // period - за какой период рассматривается информация ('New' or 'Total')
   // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
+  
   arguments: {
     sortBy: 'Confirmed',
     sortReverseFirst: true,
@@ -14,6 +15,7 @@ let dashboard = {
   },
   mapCovid: new MapCovid(),
   mapPie: new MapPie(),
+  graphic: new graphicCreator(),
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -51,6 +53,7 @@ let dashboard = {
         }
         this.lastApdate = object.Countries[0].Date;
         this.addPopulationAndFlag();
+        console.log(object)
       })
       .catch(error => console.log('error', error));
   },
@@ -78,7 +81,7 @@ let dashboard = {
 
   // для инфы по миру подневно
   //https://api.covid19api.com/world?from=2020-12-02T00:00:00Z&to=2020-12-14T00:00:00Z
-  addStatsPerDays() {
+  addStatsPerDays(country) {
     let j = 0;
     let i = 0;
 
@@ -114,9 +117,7 @@ let dashboard = {
       return;
     }
   }
-
 }
-
 function addListeners() {
   // Вкл/выкл полноэкранного режима
   document.querySelectorAll('.fullScreenBtn').forEach((button) => {
@@ -337,7 +338,6 @@ function updateData(firstTime) {
   createSecondTable(dashboard.arguments.sortReverseSecond ? arrayReverse : arraySort);
   changeTableReverse('.tabFTable__content', false)
   selectLineAndArient(3);
-  console.log(document.querySelector('.textarea').value);
   if (document.querySelector('.textarea').value) {
     searchCountry(document.querySelector('.textarea').value);
   }
@@ -346,8 +346,10 @@ function updateData(firstTime) {
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
     dashboard.mapPie.renderPie();
+    dashboard.graphic.renderGraphic();
   }
   dashboard.mapCovid.redrawMap(arraySort);
+  dashboard.graphic.rerenderGraphic();
 }
 
 function selectCountry(CountryCode, tableCount) {
@@ -367,6 +369,7 @@ function selectCountry(CountryCode, tableCount) {
     document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
   }
   selectLineAndArient(tableCount);
+  dashboard.graphic.rerenderGraphic();
   dashboard.mapCovid.followSelectCountry();
   dashboard.mapPie.selectCountry();
 }

@@ -525,7 +525,6 @@ footer a:hover {
 }
 
 @media (max-width: 1350px) {
-  body {}
   main {
     flex-wrap: wrap;
   }
@@ -540,9 +539,7 @@ footer a:hover {
   .control__panel .control__panel_population {
     height: 35%;
   }
-  .control__panel .control__panel_buttons {
-    /* height: 47%; */
-  }
+
   .mapAndControl {
     width: 55%;
     height: 57%;
