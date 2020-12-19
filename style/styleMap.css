@@ -150,7 +150,6 @@
 }
 
 .legend-value-text {
-    font-size: 16px;
     text-shadow: 0 0 2px black;
 }
 
@@ -174,7 +173,7 @@
 
 .legend-circle-Recovered {
     background-color: rgba(89,139,193,0.4);
-    border: 3px solid rgba(89,139,193,0.6);
+    border: 3px solid rgba(89, 139, 193, 0.6);
 }
 
 .icon-legend {
@@ -182,6 +181,7 @@
     height: 25px;
     background-size: 23px 23px;
     background-repeat: no-repeat;
+    background-size: 100%;
 }
 .icon-legend-deaths {
     background-image: url("../assets/images/Deaths.svg");

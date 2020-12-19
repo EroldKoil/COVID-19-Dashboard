@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Covid-19</title>
   <link rel="icon" type="image/png" sizes="32x14" href="assets/images/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style/styleKeyBoard.css">
   <link rel="stylesheet" href="style/style.css">
   <link rel="stylesheet" href="style/styleSearch.css">
@@ -111,7 +112,7 @@
           </div>
         </div>
         <div class="control__diagram">
-          диаграмма
+          <canvas id="mapPie" width="95%" height="95%"></canvas>
         </div>
 
       </section>
@@ -171,7 +172,9 @@
         </div>
       </section>
     </div>
-
+    <div class="blackBG">
+      <div></div>
+    </div>
   </main>
   <footer>
     <a class="rs-link" href="https://rs.school/js/">
@@ -180,7 +183,7 @@
     <div class="madeBy">Made by
       <a href="https://github.com/EroldKoil">Yakubov Nikolay</a>
       <a href="https://github.com/lex-tp">Denis Korotkevich</a>
-      <a href="https://github.com/andrew-nechai">Andrei Niachai</a> 2020
+      <a href="https://github.com/andrew-nechai">Andrei Niachai</a>
     </div>
 
   </footer>
@@ -205,6 +208,7 @@
   <script src="modules/map.js" defer></script>
   <script src="modules/geoCountries.js" defer></script>
   <script src="modules/Chart.bundle.min.js" defer></script>
+  <script src="modules/mapPie.js" defer></script>
   <script src="modules/graphic.js" defer></script>
   <script src="index.js" defer></script>
   <script src="modules/keyBoard.js" defer></script>
