@@ -14,6 +14,7 @@ let dashboard = {
   },
   mapCovid: new MapCovid(),
   mapPie: new MapPie(),
+  graphic: new graphicCreator(),
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -74,45 +75,6 @@ let dashboard = {
       })
       .catch(error => console.log('error', error));
   },
-
-  // для инфы по миру подневно
-  //https://api.covid19api.com/world?from=2020-12-02T00:00:00Z&to=2020-12-14T00:00:00Z
-  addStatsPerDays() {
-    let j = 0;
-    let i = 0;
-
-    let str = Object.keys(this.allInfo)[i];
-    fetch(`https://api.covid19api.com/live/country/${dashboard.allInfo[dashboard.selectedCountry].Country}/status/confirmed`, this.requestOptions)
-      .then(response => response.text())
-      .then(result => {
-
-        let country = JSON.parse(result);
-        if (country.success !== false) {
-
-          country.forEach((month) => {
-            let m = {
-              Confirmed: month.Confirmed,
-              Deaths: month.Deaths,
-              Recovered: month.Recovered,
-              Active: month.Active,
-              Date: month.Date
-            };
-          })
-          j++;
-          if (j >= this.allInfo.length) {
-
-          }
-        }
-      }).catch(error => {
-        console.log('error', error);
-        j++;
-      });
-    i++;
-    if (i >= Object.keys(this.allInfo).length) {
-      clearInterval(interval);
-      return;
-    }
-  }
 
 }
 
@@ -313,7 +275,6 @@ function addListeners() {
       }
     }
   });
-
 }
 
 function openCloseKeyboard() {
@@ -345,8 +306,10 @@ function updateData(firstTime) {
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
     dashboard.mapPie.renderPie();
+    dashboard.graphic.renderGraphic();
   }
   dashboard.mapCovid.redrawMap(arraySort);
+  dashboard.graphic.rerenderGraphic();
 }
 
 function selectCountry(CountryCode, tableCount) {
@@ -366,6 +329,7 @@ function selectCountry(CountryCode, tableCount) {
     document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
   }
   selectLineAndArient(tableCount);
+  dashboard.graphic.rerenderGraphic();
   dashboard.mapCovid.followSelectCountry();
   dashboard.mapPie.selectCountry();
 }

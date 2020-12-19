@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="style/leaflet.css">
   <link rel="stylesheet" href="style/styleMap.css">
   <link rel="stylesheet" href="style/styleControl.css">
+  <link rel="stylesheet" href="style/graphic.css">
 </head>
 
 <body>
@@ -166,7 +167,9 @@
         <div class="fullScreenBtn">
           <img src="assets/images/fullScreen.png">
         </div>
-        <div class="sectionConttent">График</div>
+        <div class="sectionConttent graphicSection">
+          <canvas id="graphic" height="90%"></canvas>
+        </div>
       </section>
     </div>
     <div class="blackBG">
@@ -199,14 +202,15 @@
     <audio id='closeKeyboardAudio' src="assets/audio/closeKeyboard.wav"></audio>
   </div>
 
-  <script src="modules/data.js" defer></script>
   <script src="modules/leaflet.js" defer></script>
   <script src="modules/map.js" defer></script>
   <script src="modules/geoCountries.js" defer></script>
   <script src="modules/Chart.bundle.min.js" defer></script>
   <script src="modules/mapPie.js" defer></script>
+  <script src="modules/graphic.js" defer></script>
   <script src="index.js" defer></script>
   <script src="modules/keyBoard.js" defer></script>
   <script src="modules/keys.js" defer></script>
 </body>
+
 </html>
