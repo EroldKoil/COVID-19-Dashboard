@@ -125,6 +125,7 @@ function addListeners() {
         target = target.parentElement;
       }
       target.classList.toggle('fullScreen');
+      document.querySelector('.control').classList.toggle('control-full-screen');
       dashboard.mapCovid.fullScreenMap();
       // изменение картинки для кнопки
       target.querySelector('img').src = `assets/images/${target.classList.contains('fullScreen')?'miniScreen':'fullScreen'}.png`
@@ -147,14 +148,18 @@ function addListeners() {
   // открытие клавы
   document.querySelector('.openKeyboardBtn').addEventListener('click', (event) => {
     document.querySelector('.textarea').autofocus;
-    let keyboardContainer = document.querySelector('.keyboardContainer');
-    keyboardContainer.classList.toggle('keyboardContainerHidden');
-    if (!isMute) {
-      let voice = document.getElementById('openKeyboardAudio');
-      voice.currentTime = 0;
-      voice.play();
-    }
+
+    let voice = document.getElementById('openKeyboardAudio');
+    voice.currentTime = 0;
+    voice.play();
   });
+
+  function openCloseKeyboard() {
+    let keyB = document.querySelector('.keyboardContainer');
+    keyB.classList.toggle('keyboardContainerHidden');
+    if (keyB.classList.contains('keyboardContainerHidden')) {}
+
+  }
 
   // Изменение строки поиска
   document.querySelector('.textarea').addEventListener('input', () => {
@@ -366,7 +371,7 @@ function selectLineAndArient(tableCount) {
       selectedLine = document.querySelector('.tableSecond__content .tableLine-selected');
       table = document.querySelector('.tableSecond__content');
       table.scrollTop = selectedLine.offsetTop - 130;
-    }else {
+    } else {
       dashboard.mapCovid.followSelectCountry();
     }
   }
@@ -376,7 +381,7 @@ function createSecondTable(arraySort) {
   let str = '';
   arraySort.forEach((el) => {
     str += `<div class="tableSecond__line" name="${el.CountryCode}">
-		<div class="tableSecond__line__number">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
+		<div class="tableSecond__line__number text-${dashboard.arguments.sortBy}">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
 		<div class="tableSecond__line__name">${el.Country}</div>
 		<div class="tableSecond__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
 		</div>
