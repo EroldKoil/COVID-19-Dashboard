@@ -1,10 +1,5 @@
 let dashboard = {
   selectedCountry: 'world',
-  //mapCovid: new MapCovid(),
-
-  // argument - критерий для отбора данных: ('Confirmed' or 'Deaths' or 'Recovered')
-  // period - за какой период рассматривается информация ('New' or 'Total')
-  // absValue - рассматриваются абсолютные величины или в рвсчете на 100 тыс. населения (true for absolute)
   arguments: {
     sortBy: 'Confirmed',
     sortReverseFirst: true,
@@ -14,6 +9,7 @@ let dashboard = {
   },
   mapCovid: new MapCovid(),
   mapPie: new MapPie(),
+  graphic: new graphicCreator(),
   allInfo: {},
   worldInfo: {},
   lastApdate: 0,
@@ -75,49 +71,10 @@ let dashboard = {
       .catch(error => console.log('error', error));
   },
 
-  // для инфы по миру подневно
-  //https://api.covid19api.com/world?from=2020-12-02T00:00:00Z&to=2020-12-14T00:00:00Z
-  addStatsPerDays() {
-    let j = 0;
-    let i = 0;
-
-    let str = Object.keys(this.allInfo)[i];
-    fetch(`https://api.covid19api.com/live/country/${dashboard.allInfo[dashboard.selectedCountry].Country}/status/confirmed`, this.requestOptions)
-      .then(response => response.text())
-      .then(result => {
-
-        let country = JSON.parse(result);
-        if (country.success !== false) {
-
-          country.forEach((month) => {
-            let m = {
-              Confirmed: month.Confirmed,
-              Deaths: month.Deaths,
-              Recovered: month.Recovered,
-              Active: month.Active,
-              Date: month.Date
-            };
-          })
-          j++;
-          if (j >= this.allInfo.length) {
-
-          }
-        }
-      }).catch(error => {
-        console.log('error', error);
-        j++;
-      });
-    i++;
-    if (i >= Object.keys(this.allInfo).length) {
-      clearInterval(interval);
-      return;
-    }
-  }
-
 }
 
 function addListeners() {
-  // Вкл/выкл полноэкранного режима
+  // On/Off full screen mode
   document.querySelectorAll('.fullScreenBtn').forEach((button) => {
     button.addEventListener('click', (event) => {
       let target = event.target;
@@ -129,13 +86,12 @@ function addListeners() {
       document.querySelector('body').classList.toggle('bodyFullScreen');
       document.querySelector('.blackBG').classList.toggle('blackBG-On');
       dashboard.mapCovid.fullScreenMap();
-      // изменение картинки для кнопки
       target.querySelector('img').src = `assets/images/${target.classList.contains('fullScreen')?'miniScreen':'fullScreen'}.png`
     });
   });
 
 
-  // Открытие поиска
+  // Open searsh
   document.querySelector('.searchBtn').addEventListener('click', () => {
     document.querySelector('.textarea').autofocus;
     document.querySelector('.searchContainer').classList.toggle('openSearchContainer');
@@ -150,13 +106,13 @@ function addListeners() {
     }
   });
 
-  // открытие клавы
+  // Open keyboard
   document.querySelector('.openKeyboardBtn').addEventListener('click', (event) => {
     document.querySelector('.textarea').autofocus;
     openCloseKeyboard();
   });
 
-  // Изменение строки поиска
+  // Looking for change search input
   document.querySelector('.textarea').addEventListener('input', () => {
     searchCountry(document.querySelector('.textarea').value);
     if (document.querySelector('.tableLine-selected') && !document.querySelector('.tableLine-selected').classList.contains('country-hidden')) {
@@ -164,7 +120,7 @@ function addListeners() {
     }
   });
 
-  // Клик по городу
+  // Passing the city
   document.querySelectorAll('.tabFTable__content, .tableSecond__content').forEach(el => {
     el.addEventListener('click', (event) => {
       let target = event.target;
@@ -175,7 +131,7 @@ function addListeners() {
     });
   });
 
-  // Изменение сортировки таблиц
+  // Change sort parameter
   document.querySelectorAll('.headerTable, .tableSecond__header').forEach(el => {
     el.addEventListener('click', (event) => {
       let target = event.target;
@@ -227,7 +183,7 @@ function addListeners() {
     });
   });
 
-  // Работа переключателей
+  // Switch
   document.querySelectorAll('.argum-changer__button').forEach(el => {
     el.style.right = '1%';
     el.onmousedown = (event) => {
@@ -242,7 +198,6 @@ function addListeners() {
       let newRight = right;
       let percentMax = 78;
       let percentMin = 1;
-
 
       if (dashboard.arguments[elName] === true ||
         dashboard.arguments[elName] === 'Total' ||
@@ -313,9 +268,9 @@ function addListeners() {
       }
     }
   });
-
 }
 
+// Open/Close Keyboard
 function openCloseKeyboard() {
   let keyB = document.querySelector('.keyboardContainer');
   keyB.classList.toggle('keyboardContainerHidden');
@@ -329,6 +284,7 @@ function openCloseKeyboard() {
   voice.play();
 }
 
+// Update all data
 function updateData(firstTime) {
   let arraySort = getSortedArray();
   let arrayReverse = dashboard.arguments.sortReverseFirst || dashboard.arguments.sortReverseSecond ? [...arraySort].reverse() : null;
@@ -336,7 +292,6 @@ function updateData(firstTime) {
   createSecondTable(dashboard.arguments.sortReverseSecond ? arrayReverse : arraySort);
   changeTableReverse('.tabFTable__content', false)
   selectLineAndArient(3);
-  console.log(document.querySelector('.textarea').value);
   if (document.querySelector('.textarea').value) {
     searchCountry(document.querySelector('.textarea').value);
   }
@@ -345,17 +300,16 @@ function updateData(firstTime) {
     document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
     dashboard.mapCovid.renderMap();
     dashboard.mapPie.renderPie();
+    dashboard.graphic.renderGraphic();
   }
   dashboard.mapCovid.redrawMap(arraySort);
+  dashboard.graphic.rerenderGraphic();
 }
 
+// Select the country
 function selectCountry(CountryCode, tableCount) {
   dashboard.selectedCountry = CountryCode === dashboard.selectedCountry ? 'world' : CountryCode;
   // View all countries
-  /*document.querySelectorAll('.country-hidden').forEach(el => {
-    el.classList.remove('country-hidden')
-  });*/
-
   document.querySelectorAll('.tableLine-selected').forEach(el => {
     el.classList.remove('tableLine-selected')
   });
@@ -366,10 +320,12 @@ function selectCountry(CountryCode, tableCount) {
     document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
   }
   selectLineAndArient(tableCount);
+  dashboard.graphic.rerenderGraphic();
   dashboard.mapCovid.followSelectCountry();
   dashboard.mapPie.selectCountry();
 }
 
+// Select country line and scroll countries list
 function selectLineAndArient(tableCount) {
   if (dashboard.selectedCountry !== 'world') {
     document.querySelectorAll(`.tableSecond__line[name=${dashboard.selectedCountry}] , .fTableLine[name=${dashboard.selectedCountry}]`).forEach(el => {
@@ -388,19 +344,7 @@ function selectLineAndArient(tableCount) {
   }
 }
 
-function createSecondTable(arraySort) {
-  let str = '';
-  arraySort.forEach((el) => {
-    str += `<div class="tableSecond__line" name="${el.CountryCode}">
-		<div class="tableSecond__line__number text-${dashboard.arguments.sortBy}">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
-		<div class="tableSecond__line__name">${el.Country}</div>
-		<div class="tableSecond__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
-		</div>
-		`;
-  });
-  document.querySelector('.tableSecond__content').innerHTML = str;
-}
-
+// Create First table
 function createFirstTable(arraySort) {
   let str = '';
   arraySort.forEach((el) => {
@@ -425,7 +369,21 @@ function createFirstTable(arraySort) {
   document.querySelector('.tabFTable__content').innerHTML = str;
 }
 
-// Изменяет видимость линий в таблицах в зависимости от строки поиска
+// Create Second table
+function createSecondTable(arraySort) {
+  let str = '';
+  arraySort.forEach((el) => {
+    str += `<div class="tableSecond__line" name="${el.CountryCode}">
+		<div class="tableSecond__line__number text-${dashboard.arguments.sortBy}">${el[dashboard.arguments.period + dashboard.arguments.sortBy]}</div>
+		<div class="tableSecond__line__name">${el.Country}</div>
+		<div class="tableSecond__line__flag"><img src="https://restcountries.eu/data/${el.flag? el.flag: 'afg'}.svg"></div>
+		</div>
+		`;
+  });
+  document.querySelector('.tableSecond__content').innerHTML = str;
+}
+
+// Hide/show some countries
 function searchCountry(str) {
   document.querySelectorAll('.tableSecond__line, .fTableLine:not(.headerTable):not(.fTableGlobal)').forEach(el => {
     let name = dashboard.allInfo[el.getAttribute('name')].Country;
@@ -437,6 +395,7 @@ function searchCountry(str) {
   });
 }
 
+// Reverse countries list
 function changeTableReverse(tableClass, needReverse) {
   if (tableClass === '.tabFTable__content') {
     document.querySelector(`.tabFTable__header .table__header_arrows div:not(.notActiveArrow)`).classList.toggle('notActiveArrow');
@@ -455,6 +414,7 @@ function changeTableReverse(tableClass, needReverse) {
   }
 }
 
+// Change arrows
 function changeSortBy() {
   let percentMax = 78;
   let percentMin = 1;
@@ -462,9 +422,6 @@ function changeSortBy() {
   let buttonRight = sortBy === 'Confirmed' ? percentMin : sortBy === 'Recovered' ? percentMax / 2 : percentMax;
   document.querySelector('.argum-changer__button[name=sortBy]').style.right = `${buttonRight}%`;
   document.querySelector(`.argum-container[name=sortBy]`).style.left = `-${(buttonRight - 1) / 7 * 18}%`;
-
-  //document.querySelectorAll('.text-Selected').forEach(el => el.classList.remove('text-Selected'));
-  //document.querySelectorAll(`.tabFTable .text-${dashboard.arguments.sortBy}`).forEach(el => el.classList.add('text-Selected'));
 
   let secondH = document.querySelector('.tableSecond__header_country');
   secondH.className = `tableSecond__header_country text-${dashboard.arguments.sortBy}`;
@@ -475,6 +432,7 @@ function changeSortBy() {
   secondArrow.className = `${secondArrow.classList[0]} sortArrow${dashboard.arguments.sortBy} notActiveArrow`;
 }
 
+// Get sorted array
 function getSortedArray() {
   let dashboardCopy = JSON.parse(JSON.stringify(dashboard.allInfo));
   let arraySort = [];
@@ -492,7 +450,6 @@ function getSortedArray() {
   }
   for (key in dashboardCopy) {
     let el = dashboardCopy[key];
-
     let number = el[period + sortBy];
 
     if (arraySort.length === 0) {
@@ -514,6 +471,7 @@ function getSortedArray() {
   return arraySort;
 }
 
+// Start session
 function startSession() {
   addListeners();
   if (localStorage.getItem('covidLocalDataBase')) {
