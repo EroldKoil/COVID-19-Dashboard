@@ -1,0 +1,27 @@
+{
+  "name": "covid-19-dashboard",
+  "version": "1.0.0",
+  "description": "Covid-19-dashboard",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "mocha tests/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EroldKoil/COVID-19-Dashboard.git"
+  },
+  "keywords": [
+    "dashboard",
+    "covid-19"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EroldKoil/COVID-19-Dashboard/issues"
+  },
+  "homepage": "https://github.com/EroldKoil/COVID-19-Dashboard#readme",
+  "devDependencies": {
+    "mocha": "^8.2.1"
+  }
+}
