@@ -8,51 +8,35 @@ function graphicCreator() {
       id: 0,
       label: 'Confirmed',
       data: [],
-      backgroundColor: '#218000',
+      backgroundColor: '#218000'
     },
     {
       id: 1,
       label: 'Recovered',
       data: [],
-      backgroundColor: '#038c89',
+      backgroundColor: '#038c89'
     },
     {
       id: 2,
       label: 'Deaths',
       data: [],
-      backgroundColor: '#ff6565',
+      backgroundColor: '#ff6565'
     }
   ]
 
-  let newLegendClickHandler = function(e, legendItem) {
-    // var index = legendItem.datasetIndex;
-    // let ci = this.chart;
-    // ci.data.datasets.forEach((element) => {
-    //     if (element.id !== index) {
-    //         element.hidden = true;
-    //     } else {
-    //         element.hidden = false;
-    //     }
-    // })
-    // ci.update();
-    return;
-  };
-
-  let dataMass = ["Янв.", "Фев.", "Март.", "Апр.", "Май.", "Июн.", "Июл.", "Авг.", "Сент.", "Окт.", "Нояб.", "Дек."];
-
+  //config for graphic
   this.config = {
     type: 'bar',
     options: {
       title: {
-        display: true,
-        text: 'Graphic',
-        padding: 0,
-        lineHeight: 1
+        display: false
       },
       responsive: true,
       maintainAspectRatio: false,
       legend: {
-        onClick: newLegendClickHandler,
+        onClick: function(e, legendItem) {
+          return;
+        },
         labels: {
           boxWidth: 20
         }
@@ -61,18 +45,6 @@ function graphicCreator() {
         xAxes: [{
           ticks: {
             beginAtZero: true,
-            // callback: function(value, index, values) {
-            //     let i=0;
-            //     let month = value.slice(0, value.indexOf("/"));
-            //     let day = value.slice(value.indexOf("/")+1, value.lastIndexOf("/"));
-            //     let year = value.slice(value.lastIndexOf("/")+1);
-            //     let res = "";
-            //     if (month == 1) {
-            //         return dataMass[month-1] + "20" + year;
-            //     } else {
-            //         return dataMass[month-1];
-            //     }
-            // },
             autoSkip: true,
             maxTicksLimit: 13
           },
@@ -84,22 +56,26 @@ function graphicCreator() {
             callback: function(value, index, values) {
               let length = value.toString().length;
               let str = value.toString();
-              if (length == 4) {
-                return str.slice(0, 1) + "тыс.";
-              }
-              if (length == 5) {
-                return str.slice(0, 2) + "тыс.";
-              }
-              if (length == 6) {
-                return 0 + "." + str.slice(0, 1) + "млн.";
-              }
-              if (length == 7) {
-                return str.slice(0, 1) + "млн.";
-              }
-              if (length >= 8) {
-                return str.slice(0, str.length - 6) + "млн.";
+              if (str[0] == '0') {
+                return str.slice(0,7);
               } else {
-                return str
+                if (length == 4) {
+                  return str.slice(0, 1) + "тыс.";
+                }
+                if (length == 5) {
+                  return str.slice(0, 2) + "тыс.";
+                }
+                if (length == 6) {
+                  return 0 + "." + str.slice(0, 1) + "млн.";
+                }
+                if (length == 7) {
+                  return str.slice(0, 1) + "млн.";
+                }
+                if (length >= 8) {
+                  return str.slice(0, str.length - 6) + "млн.";
+                } else {
+                  return str;
+                }
               }
             },
             beginAtZero: true
@@ -110,26 +86,9 @@ function graphicCreator() {
   }
 }
 
-graphicCreator.prototype.generateConfig = function() {
-  this.config.data = [];
-
-
-  // if (!dashboard.arguments.absValue) {
-  //     this.datasets.forEach((element, index) => {
-  //         if (element.label == dashboard.arguments.sortBy) {
-  //             this.datasets[index].data = this.datasets[index].data.map(element)
-  //         }
-  //     });
-  // }
-}
 
 graphicCreator.prototype.renderGraphic = function() {
-  Chart.defaults.global.defaultFontColor = '#fff';
-  // let mass = [];
-  // mass.push(this.datasets[0]);
-  // console.log(mass)
-  // this.dataMass.datasets = mass;
-  // this.config.data = this.dataMass;
+  Chart.defaults.global.defaultFontColor = '#ababab';
   this.graphic = new Chart(this.context, this.config);
 }
 
@@ -137,11 +96,8 @@ graphicCreator.prototype.rerenderGraphic = function() {
   this.context.data = {};
   let resultObj = {};
 
-  //graphic clear
-  this.datasets.forEach(element => {
-    element.data = [];
-  });
-  this.graphic.update();
+  //clear mass's with values 
+  this.clearDataSets();
 
   if (dashboard.arguments.sortBy == "Confirmed") {
     resultObj = this.datasets[0];
@@ -157,53 +113,17 @@ graphicCreator.prototype.rerenderGraphic = function() {
       .then(response => response.text())
       .then(result => {
         let object = JSON.parse(result);
-
-        //заполнение массивов данными
-        for (item in object) {
-          if (item == "cases" && dashboard.arguments.sortBy == "Confirmed") {
-            let mass = Object.entries(object[item]);
-            mass.forEach(element => {
-              resultObj.data.push(element[1]);
-            })
-          }
-          if (item == "recovered" && dashboard.arguments.sortBy == "Recovered") {
-            let mass = Object.entries(object[item]);
-            mass.forEach(element => {
-              resultObj.data.push(element[1]);
-            })
-          }
-          if (item == "deaths" && dashboard.arguments.sortBy == "Deaths") {
-            let mass = Object.entries(object[item]);
-            mass.forEach(element => {
-              resultObj.data.push(element[1]);
-            })
-          }
-        }
+        
+        //fill mass of points for graphic
+        resultObj.data = this.updateDataSets(object);
 
         //last apdated or all time
-        if (dashboard.arguments.period == "New") {
-          let mass = [];
-          for (let i = 1; i < resultObj.data.length; i++) {
-            mass.push(resultObj.data[i] - resultObj.data[i - 1] < 0 ? mass[i - 2] : resultObj.data[i] - resultObj.data[i - 1]);
-          }
-          resultObj.data = mass.slice();
-        }
+        resultObj.data = this.changeUpdateTime(resultObj.data);
 
         //на 100 000 населения или absolute
-        let population = dashboard.worldInfo.population;
-        if (!dashboard.arguments.absValue) {
-          resultObj.data = resultObj.data.map(element => {
-            return Math.floor(100000 / population * element);
-          })
-        }
+        resultObj.data = this.changeStep(resultObj.data, false);   
 
-        let labels = Object.keys(object['cases']);
-        let datasets = [];
-        datasets.push(resultObj);
-        this.config.data = {
-          labels: labels,
-          datasets: datasets
-        }
+        this.changeConfig(resultObj, object);
         this.graphic.update();
       })
   } else {
@@ -212,63 +132,90 @@ graphicCreator.prototype.rerenderGraphic = function() {
       .then(result => {
         let object = JSON.parse(result).timeline;
 
-        //заполнение массивов данными
-        for (item in object) {
-          if (item == "cases" && dashboard.arguments.sortBy == "Confirmed") {
-            let mass = Object.entries(object[item]);
-            mass.forEach(element => {
-              resultObj.data.push(element[1]);
-            })
-          }
-          if (item == "recovered" && dashboard.arguments.sortBy == "Recovered") {
-            let mass = Object.entries(object[item]);
-            mass.forEach(element => {
-              resultObj.data.push(element[1]);
-            })
-          }
-          if (item == "deaths" && dashboard.arguments.sortBy == "Deaths") {
-            let mass = Object.entries(object[item]);
-            mass.forEach(element => {
-              resultObj.data.push(element[1]);
-            })
-          }
-        }
+        //fill mass of points for graphic
+        resultObj.data = this.updateDataSets(object);
 
         //last apdated or all time
-        if (dashboard.arguments.period == "New") {
-          let mass = [];
-          for (let i = 1; i < resultObj.data.length; i++) {
-            mass.push(resultObj.data[i] - resultObj.data[i - 1] < 0 ? mass[i - 2] : resultObj.data[i] - resultObj.data[i - 1]);
-          }
-          resultObj.data = mass;
-        }
+        resultObj.data = this.changeUpdateTime(resultObj.data);
 
         //на 100 000 населения или absolute
-        let population = dashboard.allInfo[dashboard.selectedCountry].population;
-        if (!dashboard.arguments.absValue) {
-          resultObj.data = resultObj.data.map(element => {
-            return Math.floor(100000 / population * element);
-          })
-        }
+        resultObj.data = this.changeStep(resultObj.data, true);
 
-        let labels = Object.keys(object['cases']);
-        let datasets = [];
-        datasets.push(resultObj);
-        this.config.data = {
-          labels: labels,
-          datasets: datasets
-        }
-        console.log(dashboard.selectedCountry)
-          //заполнение оси X данными
+        this.changeConfig(resultObj, object);
         this.graphic.update();
       });
   }
 }
 
-graphicCreator.prototype.clearGraphic = function() {
-  this.dataMass.datasets.forEach(element => {
+graphicCreator.prototype.clearDataSets = function() {
+  this.datasets.forEach(element => {
     element.data = [];
   });
-  this.graphic.update();
-  console.log("YEs");
+}
+
+graphicCreator.prototype.updateDataSets = function(object) {
+  let data = [];
+  for (item in object) {
+    if (item == "cases" && dashboard.arguments.sortBy == "Confirmed") {
+      let mass = Object.entries(object[item]);
+      mass.forEach(element => {
+        data.push(element[1]);
+      })
+    }
+    if (item == "recovered" && dashboard.arguments.sortBy == "Recovered") {
+      let mass = Object.entries(object[item]);
+      mass.forEach(element => {
+        data.push(element[1]);
+      })
+    }
+    if (item == "deaths" && dashboard.arguments.sortBy == "Deaths") {
+      let mass = Object.entries(object[item]);
+      mass.forEach(element => {
+        data.push(element[1]);
+      })
+    }
+  }
+  return data;
+}
+
+graphicCreator.prototype.changeUpdateTime = function(mass){
+  let data = mass.slice();
+  if (dashboard.arguments.period == "New") {
+    let mass = [];
+    for (let i = 1; i < data.length; i++) {
+      mass.push(data[i] - data[i - 1] < 0 ? mass[i - 2] : data[i] - data[i - 1]);
+    }
+    data = mass;
+  }
+  return data;
+}
+
+graphicCreator.prototype.changeStep = function(mass, flag) {
+  let data = mass.slice();
+  let population;
+  if (flag) {
+    population = dashboard.allInfo[dashboard.selectedCountry].population;
+  } else {
+    population = dashboard.worldInfo.population;
+  }
+  if (!dashboard.arguments.absValue) {
+    data = data.map(element => {
+      let res = 100000 / population * element;
+      if (res < 1) {
+        return res.toFixed(4);
+      }
+      return Math.floor(res);
+    })
+  }
+  return data;
+}
+
+graphicCreator.prototype.changeConfig = function(resultObj, object) {
+  let labels = Object.keys(object['cases']);
+  let datasets = [];
+  datasets.push(resultObj);
+  this.config.data = {
+    labels: labels,
+    datasets: datasets
+  }
 }
