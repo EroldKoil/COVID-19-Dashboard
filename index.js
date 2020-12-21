@@ -65,7 +65,6 @@ let dashboard = {
         this.worldInfo.population = Object.keys(this.allInfo).reduce((accumulator, currentValue) => {
           return accumulator + +this.allInfo[currentValue].population;
         }, 0);
-        save();
         updateData(true);
       })
       .catch(error => console.log('error', error));
@@ -296,8 +295,7 @@ function updateData(firstTime) {
     searchCountry(document.querySelector('.textarea').value);
   }
   if (firstTime) {
-    let updateDate = new Date(dashboard.lastApdate);
-    document.querySelector('.controlDate').innerText = updateDate.toLocaleString();
+    document.querySelector('.controlDate').innerText = `Data for ${new Date(dashboard.lastApdate).toLocaleString()}`;
     dashboard.mapCovid.renderMap();
     dashboard.mapPie.renderPie();
     dashboard.graphic.renderGraphic();
@@ -471,23 +469,22 @@ function getSortedArray() {
   return arraySort;
 }
 
+// Set update interval
+function setUpdateInterval() {
+  let timer = 60 * 60 * 1000;
+  setInterval(() => {
+    if (new Date().getHours() == 1) {
+      updateData(true);
+    }
+  }, timer);
+}
+
 // Start session
 function startSession() {
   addListeners();
-  if (localStorage.getItem('covidLocalDataBase')) {
-    let dash = JSON.parse(localStorage.getItem('covidLocalDataBase'));
-    dashboard.allInfo = dash.allInfo;
-    dashboard.worldInfo = dash.worldInfo;
-    dashboard.lastApdate = dash.lastApdate;
-    updateData(true);
-  } else {
-    dashboard.addCovidInfo();
-  }
+  dashboard.addCovidInfo();
+  setUpdateInterval();
 }
 
-function save() {
-  let dash = { allInfo: dashboard.allInfo, worldInfo: dashboard.worldInfo, lastApdate: dashboard.lastApdate }
-  localStorage.setItem('covidLocalDataBase', JSON.stringify(dash));
-}
 
 startSession();

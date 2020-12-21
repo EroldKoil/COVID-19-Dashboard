@@ -1,7 +1,6 @@
 .searchContainer {
   height: 40px;
   width: 99%;
-  /* max-width: 500px; */
   position: absolute;
   left: -82%;
   background-color: #0000002b;
@@ -40,14 +39,6 @@ section.fullScreen .openSearchContainer,
   outline: none;
   height: 86%;
   font-size: 20px;
-}
-
-.searchVariables {
-  /* height: 300px; */
-  /* width: 185px; */
-  /* position: absolute; */
-  /* background: aliceblue; */
-  /* top: 32px; */
 }
 
 .openKeyboardBtn {

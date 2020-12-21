@@ -1,7 +1,3 @@
-html {
-  /* overflow: hidden; */
-}
-
 body {
   background-color: #2b2b2b;
   width: 100vw;
@@ -23,11 +19,11 @@ body {
 }
 
 .blackBG div {
-    width: 98%;
-    height: 98%;
-    background: #3e3d3d;
-    margin: 1% auto 0 auto;
-    border-radius: 15px;
+  width: 98%;
+  height: 98%;
+  background: #3e3d3d;
+  margin: 1% auto 0 auto;
+  border-radius: 15px;
 }
 
 .blackBG-On {
@@ -102,24 +98,64 @@ section.fullScreen {
   margin: 0 auto;
 }
 
+.graf.fullScreen {
+  height: calc(69% - 30px);
+}
+
 section.fullScreen #map {
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }
 
-section.fullScreen.tableFirst,
-section.fullScreen.tableSecond {
+section.fullScreen.tableFirst {
   height: calc(69% - 30px);
+}
+
+section.fullScreen.tableSecond {
+  height: calc(69% - 74px);
 }
 
 .sectionConttent {
   height: 100%;
   z-index: 2;
+  overflow: hidden;
 }
 
 .mapAndControl {
   width: 49%;
   height: 100%;
+}
+
+.control__panel_countryInfo {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5px 0 10px;
+}
+
+.countryTextInfo {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: 1.5em;
+}
+
+.countryMapInfo img {
+  height: 100%;
+  margin: 0 auto;
+}
+
+.countryInfo-population {
+  display: flex;
+}
+
+.countryInfo-parameter {
+  display: flex;
+}
+
+.countryMapInfo {
+  width: 30%;
+  display: flex;
 }
 
 .topNumber {
@@ -181,12 +217,11 @@ section.fullScreen.tableSecond {
   font-size: 1.4em;
 }
 
-.tableSecond__top {}
-
 .tableSecond__content {
-  height: calc(100% - 64px);
+  height: calc(100% - 52px);
   overflow-y: scroll;
   scroll-behavior: smooth;
+  background: linear-gradient(45deg, #000000b3, #61616182, #272d2d6b, #272d2d45, #4c4747ab, #00000099);
 }
 
 *::-webkit-scrollbar {
@@ -199,10 +234,12 @@ section.fullScreen.tableSecond {
 
 *::-webkit-scrollbar-track {
   background-color: #999;
+  background: linear-gradient(180deg, black 90%, transparent calc(100% - 15px), transparent);
 }
 
 *::-webkit-scrollbar-track-piece {
   background-color: #000000f5;
+  background: linear-gradient(180deg, black 90%, transparent calc(100% - 15px), transparent);
 }
 
 *::-webkit-scrollbar-thumb {
@@ -274,8 +311,6 @@ section.fullScreen.tableSecond {
   width: 50%;
 }
 
-.tableSecond__line__flag {}
-
 .tableSecond__line__flag img {
   width: 27px;
 }
@@ -307,41 +342,34 @@ section.fullScreen.tableSecond {
 
 .tableFirst .sectionConttent {
   height: 100%;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 .graf .sectionConttent {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(45deg, #000000b3, #61616182, #272d2d6b, #272d2d45, #4c4747ab, #00000099);
 }
 
 .tableFirst .sectionConttent>div {
-  /* width: 50%; */
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
+  background: linear-gradient(90deg, #0000004a, #403e3e54 20%, #00000073 31%, #22372257 47%, #00000069 53%, #2145456e 71%, #00000052 78%, #72414161 92%, #0000006b);
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 .graf {
-  height: 39%;
+  height: calc(39% - 31px);
+  padding-top: 30px;
+  background: linear-gradient(180deg, #fff 31px, #3e3d3d 30px);
 }
-
-
-/*
-.tableFirstHeader {
-  height: 20%;
-  border-top-right-radius: 15px;
-  border-top-left-radius: 15px;
-  border-bottom: solid 2px #5656567d;
-  background-color: #6969695c;
-}*/
 
 .tabFTable {
   height: 100%;
 }
 
 .tabFTable__header {
-  /* background-color: #1715155c; */
   border-bottom: solid 2px #000000;
   height: 80px;
 }
@@ -384,8 +412,6 @@ section.fullScreen.tableSecond {
 .sortArrowTop {
   transform: rotate(180deg);
 }
-
-.sortArrowBottom {}
 
 .sortArrowBottom,
 .sortArrowTop {
@@ -483,7 +509,7 @@ section.fullScreen.tableSecond {
 
 .tabFTable__content {
   overflow-y: scroll;
-  height: calc(100% - 96px);
+  height: calc(100% - 84px);
   scroll-behavior: smooth;
 }
 
@@ -536,14 +562,12 @@ footer a:hover {
     height: 34.5%;
     margin: 0;
   }
-  .control__panel .control__panel_population {
+  .control__panel .control__panel_countryInfo {
     height: 35%;
   }
-
   .mapAndControl {
     width: 55%;
     height: 57%;
-    /* margin-right: 4px; */
     order: 2;
   }
   .tableSecond {
@@ -566,9 +590,9 @@ footer a:hover {
     margin: 0;
   }
   .graf {
-    height: 100%;
     width: 44.5%;
     margin: 0;
+    height: calc(100% - 31px);
   }
   .legend.leaflet-control {
     font-size: 1em;
@@ -595,24 +619,15 @@ footer a:hover {
     padding-right: 4px;
     width: calc(100% - 15px);
   }
-  .map {}
-  section.control {}
-  .control__panel .control__panel_population {}
-  .control__panel .control__panel_buttons {}
   .mapAndControl {
     height: 600px;
-    /* width: 66%; */
   }
   .tableSecond {
     height: calc(600px - 74px);
-    /* width: 33%; */
   }
   .grafAndTableFirst {
     height: 500px;
   }
-  .tableFirst {}
-  .graf {}
-  .leaflet-bottom.leaflet-right {}
   .legend-value-circle.icon-legend {
     width: 20px;
     height: 20px;
@@ -629,7 +644,6 @@ footer a:hover {
 }
 
 @media (max-width: 900px) {
-  body {}
   section.tableSecond,
   .mapAndControl,
   .tableFirst,
@@ -640,11 +654,6 @@ footer a:hover {
   main {
     padding-top: 5px;
   }
-  .map {}
-  section.control {
-}
-  .control__panel .control__panel_population {}
-  .control__panel .control__panel_buttons {}
   .mapAndControl {
     height: 600px;
     width: calc(100% - 0px);
@@ -668,7 +677,6 @@ footer a:hover {
     height: 70vw;
     width: 100%;
   }
-  .leaflet-bottom.leaflet-right {}
   .legend-value-circle.icon-legend {
     width: 20px;
     height: 20px;

@@ -5,6 +5,7 @@
   color: #b3b3b3;
   justify-content: center;
   border-bottom-left-radius: 7px;
+  background: linear-gradient(45deg, #000000b3, #61616182, #272d2d6b, #272d2d45, #4c4747ab, #00000099);
 }
 
 section.control-full-screen {
@@ -18,27 +19,22 @@ section.control-full-screen {
   min-width: 490px;
   max-width: 716px;
   margin: 0 auto;
-}
-
-section.control-full-screen .control__panel {
-  /* max-width: 500px; */
-  /* border-left: solid 1px #4c4c4c; */
-  /* background-color: #404040; */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 section.control-full-screen .control__diagram {
   max-width: 250px;
-  /* border-right: solid 1px #4c4c4c; */
-  /* background-color: #404040; */
+  border-top-right-radius: 0px;
 }
 
 .control__panel {
   width: 70%;
-  border-right: solid 2px #6565654f;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
   padding-bottom: 1px;
+  border-right: solid 2px #6565654f;
 }
 
 .control__panel_countryAndDate {
@@ -53,6 +49,7 @@ section.control-full-screen .control__diagram {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1.4em;
 }
 
 .controlDate {
@@ -63,6 +60,7 @@ section.control-full-screen .control__diagram {
   justify-content: center;
   align-items: center;
   border-bottom-left-radius: 5px;
+  background: #84848426;
 }
 
 .control__panel_population {
@@ -83,6 +81,7 @@ section.control-full-screen .control__diagram {
   justify-content: space-between;
   min-height: 72px;
   margin: 0 0 3px 3px;
+  border-right: solid 2px #6565654f;
 }
 
 .control-argum {
@@ -185,8 +184,9 @@ section.control-full-screen .control__diagram {
   background: #8c8c8c;
 }
 
-.control-period-and-abs {}
-
 .control__diagram {
   width: 30%;
+  background: #84848426;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
 }
