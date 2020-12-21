@@ -25,6 +25,7 @@ class MapPie {
                 ]
             },
             options: {
+                maintainAspectRatio: false,
                 title: {
                     display: true,
                     text: 'Global chart',
