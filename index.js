@@ -361,7 +361,7 @@ function createFirstTable(arraySort) {
   ['Confirmed', 'Recovered', 'Deaths'].forEach(param => {
     document.querySelector(`.fTableGlobal .text-${param}`).innerText =
       dashboard.arguments.absValue ? dashboard.worldInfo[dashboard.arguments.period + param] :
-      Math.floor(100000 / dashboard.worldInfo.population * dashboard.worldInfo[dashboard.arguments.period + param]);
+      getImportanceValue(dashboard.worldInfo, dashboard.arguments.period + param);
   });
 
   document.querySelector('.tabFTable__content').innerHTML = str;
@@ -442,7 +442,7 @@ function getSortedArray() {
     Object.keys(dashboardCopy).forEach(key => {
       let element = dashboardCopy[key];
       ['NewConfirmed', 'NewDeaths', 'NewRecovered', 'TotalConfirmed', 'TotalDeaths', 'TotalRecovered'].forEach(param => {
-        element[param] = Math.floor(100000 / element.population * element[param]);
+        element[param] = getImportanceValue(element, param);
       });
     });
   }
@@ -467,6 +467,10 @@ function getSortedArray() {
     }
   }
   return arraySort;
+}
+
+function getImportanceValue(element, param) {
+  return Math.floor(100000 / element.population * element[param]);
 }
 
 // Set update interval
