@@ -47,7 +47,7 @@ let dashboard = {
         this.lastApdate = object.Countries[0].Date;
         this.addPopulationAndFlag();
       })
-      .catch(error => console.log('error', error));
+      .catch(() => alert("API error. Refresh webPage later"));
   },
 
   addPopulationAndFlag() {
@@ -67,7 +67,7 @@ let dashboard = {
         }, 0);
         updateData(true);
       })
-      .catch(error => console.log('error', error));
+      .catch(() => alert("API error. Refresh webPage later"));
   },
 
 }
@@ -383,8 +383,6 @@ function createFirstTable(arraySort) {
   });
   ['Confirmed', 'Recovered', 'Deaths'].forEach(param => {
     document.querySelector(`.fTableGlobal .text-${param}`).innerText = getImportanceValue(dashboard.worldInfo, dashboard.arguments.period + dashboard.arguments.sortBy);
-    /* dashboard.arguments.absValue ? dashboard.worldInfo[dashboard.arguments.period + param] :
-     getImportanceValue(dashboard.worldInfo, dashboard.arguments.period + param);*/
   });
 
   document.querySelector('.tabFTable__content').innerHTML = str;
@@ -496,7 +494,19 @@ function getImportanceValue(element, param) {
   if (dashboard.arguments.absValue) {
     return element[param];
   }
-  return Math.floor(100000 / element.population * element[param]);
+  return getFixedValue(100000 / element.population * element[param]);
+}
+
+function getFixedValue(value) {
+  if (value > 100) {
+    return Math.round(value);
+  } else if (value > 30) {
+    return value.toFixed(1);
+  } else if (value > 10) {
+    return value.toFixed(2);
+  } else {
+    return value.toFixed(3);
+  }
 }
 
 // Set update interval

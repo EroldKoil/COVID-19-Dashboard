@@ -55,4 +55,24 @@ describe('covidFunction', () => {
     assert.equal(func.getImportanceValue(elementsArray[2], 'death', true), 20);
     assert.equal(func.getImportanceValue(elementsArray[3], 'death', false), 4);
   });
+
+  it.optional('makeValuesShorter should return shorter number', () => {
+    assert.equal(func.makeValuesShorter(null), 0);
+    assert.equal(func.makeValuesShorter(undefined), '');
+    assert.equal(func.makeValuesShorter(0.01234567), 0.01234567);
+    assert.equal(func.makeValuesShorter(12345), '12 тыс.');
+    assert.equal(func.makeValuesShorter(1000000), '1.0 млн.');
+    assert.equal(func.makeValuesShorter(32000000), '32 млн.');
+  });
+
+  it.optional('makeValuesShorter should return shorter number', () => {
+    assert.equal(func.getFixedValue(null), 0);
+    assert.equal(func.getFixedValue(undefined), 0);
+    assert.equal(func.getFixedValue(101), 101);
+    assert.equal(func.getFixedValue(12345.1), 12345);
+    assert.equal(func.getFixedValue(32.76), 32.8);
+    assert.equal(func.getFixedValue(11.12345), 11.12);
+    assert.equal(func.getFixedValue(1.12345), 1.123);
+  });
+
 });

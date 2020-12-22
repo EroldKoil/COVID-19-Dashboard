@@ -53,30 +53,8 @@ function graphicCreator() {
         }],
         yAxes: [{
           ticks: {
-            callback: function(value) {
-              let length = value.toString().length;
-              let str = value.toString();
-              if (str[0] == '0') {
-                return str.slice(0, 7);
-              } else {
-                if (length == 4) {
-                  return str.slice(0, 1) + "тыс.";
-                }
-                if (length == 5) {
-                  return str.slice(0, 2) + "тыс.";
-                }
-                if (length == 6) {
-                  return 0 + "." + str.slice(0, 1) + "млн.";
-                }
-                if (length == 7) {
-                  return str.slice(0, 1) + "млн.";
-                }
-                if (length >= 8) {
-                  return str.slice(0, str.length - 6) + "млн.";
-                } else {
-                  return str;
-                }
-              }
+            callback: (value) => {
+              return this.makeValuesShorter(value);
             },
             beginAtZero: true
           }
@@ -125,7 +103,7 @@ graphicCreator.prototype.rerenderGraphic = function() {
 
         this.changeConfig(resultObj, object);
         this.graphic.update();
-      })
+      }).catch(() => alert("Don't change country so fast. API can't handle it"));
   } else {
     fetch(`https://disease.sh/v3/covid-19/historical/${dashboard.selectedCountry}?lastdays=all`)
       .then(response => response.text())
@@ -143,7 +121,7 @@ graphicCreator.prototype.rerenderGraphic = function() {
 
         this.changeConfig(resultObj, object);
         this.graphic.update();
-      });
+      }).catch(() => alert("Don't change country so fast. API can't handle it"));;
   }
 }
 
@@ -199,15 +177,15 @@ graphicCreator.prototype.changeStep = function(mass, flag) {
     population = dashboard.worldInfo.population;
   }
   if (!dashboard.arguments.absValue) {
-    data = data.map(element => {
-      let res = 100000 / population * element;
-      if (res < 1) {
-        return res.toFixed(4);
-      }
-      return Math.floor(res);
-    })
+    data = this.getCorrectValues(data, population);
   }
   return data;
+}
+
+graphicCreator.prototype.getCorrectValues = function(data, population) {
+  return data.map(element => {
+    return getFixedValue(100000 / population * element);
+  });
 }
 
 graphicCreator.prototype.changeConfig = function(resultObj, object) {
@@ -217,5 +195,32 @@ graphicCreator.prototype.changeConfig = function(resultObj, object) {
   this.config.data = {
     labels: labels,
     datasets: datasets
+  }
+}
+
+graphicCreator.prototype.makeValuesShorter = function(value) {
+  let str = value.toString();
+  let sliceStr = "";
+  if (Math.floor(value) !== value) {
+    sliceStr = str.slice(0, str.indexOf(".") + 1);
+  } else {
+    sliceStr = str;
+  }
+  if (sliceStr.length == 4) {
+    return str.slice(0, 1) + "." + str.slice(1, 2) + " тыс.";
+  }
+  if (sliceStr.length == 5) {
+    return str.slice(0, 2) + " тыс.";
+  }
+  if (sliceStr.length == 6) {
+    return 0 + "." + str.slice(0, 1) + " млн.";
+  }
+  if (sliceStr.length == 7) {
+    return str.slice(0, 1) + "." + str.slice(1, 2) + " млн.";
+  }
+  if (sliceStr.length >= 8) {
+    return str.slice(0, str.length - 6) + " млн.";
+  } else {
+    return str;
   }
 }
