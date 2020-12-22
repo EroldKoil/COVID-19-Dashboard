@@ -299,9 +299,35 @@ function updateData(firstTime) {
     dashboard.mapCovid.renderMap();
     dashboard.mapPie.renderPie();
     dashboard.graphic.renderGraphic();
+    updateControlInfo();
   }
+  updateControlInfo();
   dashboard.mapCovid.redrawMap(arraySort);
   dashboard.graphic.rerenderGraphic();
+}
+
+function updateControlInfo() {
+  let arrayInfo;
+  let getControlInfo = (country) => {
+    return [getImportanceValue(country, dashboard.arguments.period + dashboard.arguments.sortBy, dashboard.arguments.absValue), country.population];
+  }
+  let flag = document.querySelector('.countryMapInfo img');
+  if (dashboard.selectedCountry === 'world') {
+    arrayInfo = getControlInfo(dashboard.worldInfo);
+    document.querySelector('.controlCountry').innerText = 'WORLD';
+    flag.src = 'assets/images/world.png';
+    flag.style.width = 'auto';
+  } else {
+    arrayInfo = getControlInfo(dashboard.allInfo[dashboard.selectedCountry]);
+    document.querySelector('.controlCountry').innerText = dashboard.allInfo[dashboard.selectedCountry].Country;
+    flag.src = `https://restcountries.eu/data/${dashboard.allInfo[dashboard.selectedCountry].flag}.svg`;
+    flag.style.width = '100%';
+  }
+
+  document.querySelector('.countryInfo-parameter .countryInfo__description').innerText = `${dashboard.arguments.period === 'Total'? 'All': 'New'} ${(dashboard.arguments.sortBy).toLowerCase()}${!dashboard.arguments.absValue? ' per 100k /p': ''}: `;
+  document.querySelector('.countryInfo-parameter .countryInfo__value').innerText = arrayInfo[0];
+  document.querySelector('.countryInfo-population .countryInfo__value').innerText = arrayInfo[1];
+  document.querySelector('.countryInfo-parameter').className = `countryInfo-parameter text-${dashboard.arguments.sortBy}`;
 }
 
 // Select the country
@@ -312,11 +338,8 @@ function selectCountry(CountryCode, tableCount) {
     el.classList.remove('tableLine-selected')
   });
 
-  if (dashboard.selectedCountry === 'world') {
-    document.querySelector('.controlCountry').innerText = 'WORLD';
-  } else {
-    document.querySelector('.controlCountry').innerText = dashboard.allInfo[CountryCode].Country;
-  }
+  updateControlInfo();
+
   selectLineAndArient(tableCount);
   dashboard.graphic.rerenderGraphic();
   dashboard.mapCovid.followSelectCountry();
@@ -359,9 +382,9 @@ function createFirstTable(arraySort) {
 		`;
   });
   ['Confirmed', 'Recovered', 'Deaths'].forEach(param => {
-    document.querySelector(`.fTableGlobal .text-${param}`).innerText =
-      dashboard.arguments.absValue ? dashboard.worldInfo[dashboard.arguments.period + param] :
-      getImportanceValue(dashboard.worldInfo, dashboard.arguments.period + param);
+    document.querySelector(`.fTableGlobal .text-${param}`).innerText = getImportanceValue(dashboard.worldInfo, dashboard.arguments.period + dashboard.arguments.sortBy);
+    /* dashboard.arguments.absValue ? dashboard.worldInfo[dashboard.arguments.period + param] :
+     getImportanceValue(dashboard.worldInfo, dashboard.arguments.period + param);*/
   });
 
   document.querySelector('.tabFTable__content').innerHTML = str;
@@ -470,6 +493,9 @@ function getSortedArray() {
 }
 
 function getImportanceValue(element, param) {
+  if (dashboard.arguments.absValue) {
+    return element[param];
+  }
   return Math.floor(100000 / element.population * element[param]);
 }
 

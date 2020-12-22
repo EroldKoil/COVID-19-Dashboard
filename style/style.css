@@ -138,15 +138,18 @@ section.fullScreen.tableSecond {
   flex-direction: column;
   justify-content: space-around;
   font-size: 1.5em;
+  text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black;
 }
 
 .countryMapInfo img {
   height: 100%;
   margin: 0 auto;
+  width: auto;
 }
 
 .countryInfo-population {
   display: flex;
+  color: coral;
 }
 
 .countryInfo-parameter {
@@ -695,5 +698,13 @@ footer a:hover {
   .madeBy {
     width: 90%;
     margin: 0 5px;
+  }
+  .countryTextInfo {
+    font-size: 1.2em;
+    width: 70%;
+  }
+  .countryMapInfo {
+    width: 30%;
+    height: 90%;
   }
 }

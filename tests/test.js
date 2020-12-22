@@ -50,9 +50,9 @@ describe('covidFunction', () => {
       { population: 579841, death: 20 },
       { population: 4809841, death: 200 }
     ];
-    assert.equal(func.getImportanceValue(elementsArray[0], 'death'), 20);
-    assert.equal(func.getImportanceValue(elementsArray[1], 'death'), 8);
-    assert.equal(func.getImportanceValue(elementsArray[2], 'death'), 3);
-    assert.equal(func.getImportanceValue(elementsArray[3], 'death'), 4);
+    assert.equal(func.getImportanceValue(elementsArray[0], 'death', false), 20);
+    assert.equal(func.getImportanceValue(elementsArray[1], 'death', false), 8);
+    assert.equal(func.getImportanceValue(elementsArray[2], 'death', true), 20);
+    assert.equal(func.getImportanceValue(elementsArray[3], 'death', false), 4);
   });
 });

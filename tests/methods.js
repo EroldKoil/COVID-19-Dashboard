@@ -25,7 +25,10 @@ function correctionOfCoords(array) {
   return null;
 }
 
-function getImportanceValue(element, param) {
+function getImportanceValue(element, param, absValue) {
+  if (absValue) {
+    return element[param];
+  }
   return Math.floor(100000 / element.population * element[param]);
 }
 

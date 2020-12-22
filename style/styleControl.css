@@ -8,6 +8,10 @@
   background: linear-gradient(45deg, #000000b3, #61616182, #272d2d6b, #272d2d45, #4c4747ab, #00000099);
 }
 
+.countryInfo__description {
+    margin-right: 5px;
+}
+
 section.control-full-screen {
   position: fixed;
   bottom: 1%;
