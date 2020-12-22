@@ -4,7 +4,6 @@ const textarea = document.querySelector(".textarea");
 const keyboard = document.createElement("div");
 const keyboardContainer = document.createElement("div");
 const closeKeyboard = document.createElement("div");
-const muteButton = document.createElement("div");
 
 keyboardContainer.className = 'keyboardContainer keyboardContainerHidden';
 closeKeyboard.className = 'closeKeyboard';
@@ -12,28 +11,10 @@ closeKeyboard.innerHTML = '<div>&#62&#62&#62</div>';
 
 keyboard.id = 'keyboard';
 keyboard.className = 'keyboard';
-/*
-muteButton.className = 'muteButton';
-muteButton.innerHTML =
-    `<div class="keyContent">
-    <div class="keyFront"><img src="assets/icons/sound.png"></div>
-    <div class="keyBack"><img src="assets/icons/mute.png"></div>
-</div>`;
-
-muteButton.addEventListener('click', () => {
-    isMute = !isMute;
-    if (isMute) {
-        muteButton.classList.add('turned');
-    } else {
-        muteButton.classList.remove('turned');
-    }
-});*/
 
 keyboardContainer.append(closeKeyboard);
 keyboardContainer.append(keyboard);
-//body.append(textarea);
 body.append(keyboardContainer);
-body.append(muteButton);
 
 let lang = localStorage.getItem('keyboardVirtualLang') == undefined ? 'ru' : localStorage.getItem('keyboardVirtualLang');
 let shift = false;
@@ -260,6 +241,9 @@ document.getElementById('keyboard').addEventListener('mousedown', function(event
 
 document.addEventListener('keydown', function(event) {
   textarea.focus();
+  if (event.key === 'Enter') {
+    trySelectCountry();
+  }
   let key = document.getElementById(event.code);
   if (key != null) {
     if (event.code == 'ShiftLeft' || event.code == 'ShiftRight') {
@@ -335,17 +319,6 @@ function press(onOff, key, needSound) {
   }
 
 }
-/*
-textarea.addEventListener('click', () => {
-  if (keyboardContainer.classList.length == 2) {
-    keyboardContainer.classList.remove('keyboardContainerHidden');
-    if (!isMute) {
-      let voice = document.getElementById('openKeyboardAudio');
-      voice.currentTime = 0;
-      voice.play();
-    }
-  }
-});*/
 
 closeKeyboard.addEventListener('click', () => {
   if (keyboardContainer.classList.length == 1) {
